@@ -1,0 +1,29 @@
+body {
+    background: #121212;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar {
+    background-color: #1db954 !important;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.container h1 {
+    margin-top: 40px;
+    font-size: 48px;
+}
+
+.container p.lead {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.container img {
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
