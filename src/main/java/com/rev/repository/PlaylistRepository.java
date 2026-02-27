@@ -34,4 +34,11 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     // Get user's playlists sorted by creation date (latest first)
     List<Playlist> findByUser_UserIdOrderByCreatedAtDesc(Long userId);
 
+    // ------------------- Optional / Advanced -------------------
+
+    // Search public playlists by name
+    List<Playlist> findByPrivacyAndNameContainingIgnoreCase(String privacy, String name);
+
+    // Search user's playlists by name
+    List<Playlist> findByUser_UserIdAndNameContainingIgnoreCase(Long userId, String name);
 }
