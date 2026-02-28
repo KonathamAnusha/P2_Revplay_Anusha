@@ -127,12 +127,19 @@ public class UserServiceImpl implements UserServiceInterface {
     // -------------------- NEW: ACCOUNT STATISTICS --------------------
     @Override
     public UserStatsDTO getUserStats(Long userId) {
+
         // Ensure user exists
-        UserAccount user = getUserById(userId);
+        getUserById(userId);
 
         int totalPlaylists = playlistRepository.countByOwnerId(userId);
         int favoriteSongs = favoriteSongRepository.countByUserId(userId);
+
         Long totalListeningTime = listeningHistoryRepository.sumDurationByUserId(userId);
+
+        // ✅ Prevent NullPointerException
+        if (totalListeningTime == null) {
+            totalListeningTime = 0L;
+        }
 
         return new UserStatsDTO(totalPlaylists, favoriteSongs, totalListeningTime);
     }

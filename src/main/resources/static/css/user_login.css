@@ -1,31 +1,94 @@
+/* Body with subtle gradient */
 body {
-    background-color: #e9ecef;
+    background: linear-gradient(135deg, #1e1e2f, #2c3e50);
     font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 40px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Container - glass card effect */
 .container {
     max-width: 400px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
     padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    margin-top: 80px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    margin-top: 0; /* centered via flex */
 }
 
+/* Heading */
 h3 {
     text-align: center;
     margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 24px;
+    color: #ffffff;
 }
 
+/* Inputs */
 input {
+    width: 100%;
     padding: 10px;
     margin-bottom: 12px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: #ffffff;
 }
 
+input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+/* Buttons */
 button {
     padding: 10px;
     border-radius: 6px;
     font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button.btn-success {
+    background-color: #1db954;
+    color: #fff;
+}
+
+button.btn-success:hover {
+    background-color: #17a44c;
+}
+
+button.btn-secondary {
+    background-color: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+button.btn-secondary:hover {
+    background-color: rgba(255,255,255,0.3);
+}
+
+/* Back button spacing */
+button + button {
+    margin-top: 10px;
+}
+
+/* Paragraph and links */
+p {
+    color: #ffffff;
+    text-align: center;
+}
+
+p a {
+    color: #1db954;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
 }
