@@ -2,7 +2,6 @@ package com.rev.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,8 +28,21 @@ public class ListeningHistory {
     @Column(nullable = false)
     private LocalDateTime playedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action_type", nullable = false)
+    private ActionType actionType; // PLAY, SKIP, PAUSE
+
     @PrePersist
     protected void onPlay() {
         this.playedAt = LocalDateTime.now();
+        if (this.actionType == null) {
+            this.actionType = ActionType.PLAY; // default
+        }
+    }
+
+    public enum ActionType {
+        PLAY,
+        SKIP,
+        PAUSE
     }
 }
