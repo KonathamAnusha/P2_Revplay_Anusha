@@ -3,6 +3,7 @@ package com.rev.repository;
 import com.rev.entity.Favorite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,13 +25,13 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     // -------------------------
 
 
-
     // Get all favorites of a specific song
     List<Favorite> findBySong_SongId(Long songId);
 
     // Get list of user IDs who favorited a specific artist's songs
     @Query("""
-           SELECT f.user.userId
+
+            SELECT f.user.userId
            FROM Favorite f
            WHERE f.song.artist.artistId = :artistId
            """)
@@ -43,4 +44,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
            WHERE f.song.artist.artistId = :artistId
            """)
     long countFavoritesByArtist(Long artistId);
-}
+
+    // Corrected query using @Query
+    @Query("SELECT COUNT(f) FROM Favorite f WHERE f.user.userId = :userId")
+    int countByUserId(@Param("userId") Long userId);
+    }

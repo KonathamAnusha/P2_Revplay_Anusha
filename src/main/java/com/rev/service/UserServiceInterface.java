@@ -1,6 +1,7 @@
 package com.rev.service;
 
 import com.rev.dto.UserDTO;
+import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface UserServiceInterface {
     void deleteUserById(Long id);
 
     void deleteUserByEmail(String email);
+
+    UserStatsDTO getUserStats(Long userId);
 }

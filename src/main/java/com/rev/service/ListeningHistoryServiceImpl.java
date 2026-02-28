@@ -4,11 +4,9 @@ import com.rev.dto.ListeningHistoryDTO;
 import com.rev.entity.ListeningHistory;
 import com.rev.entity.Songs;
 import com.rev.entity.UserAccount;
-import com.rev.mapper.ListeningHistoryMapper;
 import com.rev.repository.ListeningHistoryRepository;
 import com.rev.repository.SongsRepository;
 import com.rev.repository.UserRepository;
-import com.rev.service.ListeningHistoryServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,61 +20,88 @@ import java.util.stream.Collectors;
 @Transactional
 public class ListeningHistoryServiceImpl implements ListeningHistoryServiceInterface {
 
-    private final ListeningHistoryRepository historyRepository;
-    private final UserRepository userRepository;
-    private final SongsRepository songRepository;
-    private final ListeningHistoryMapper mapper;
+    private final ListeningHistoryRepository historyRepo;
+    private final UserRepository userRepo;
+    private final SongsRepository songsRepo;
 
+    // ---------------- ADD LISTENING HISTORY ----------------
     @Override
     public ListeningHistoryDTO addListeningHistory(Long userId, Long songId) {
 
-        UserAccount user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        // ✅ Load user safely
+        UserAccount user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        Songs song = songRepository.findById(songId)
-                .orElseThrow(() -> new RuntimeException("Song not found with id: " + songId));
+        // ✅ Load song safely
+        Songs song = songsRepo.findById(songId)
+                .orElseThrow(() -> new RuntimeException("Song not found with ID: " + songId));
 
+        // ✅ Build the history
         ListeningHistory history = ListeningHistory.builder()
                 .user(user)
                 .song(song)
-                .actionType("PLAY")
+                .actionType(ListeningHistory.ActionType.PLAY)
                 .playedAt(LocalDateTime.now())
                 .build();
 
-        ListeningHistory saved = historyRepository.save(history);
+        // ✅ Save to DB
+        ListeningHistory saved = historyRepo.saveAndFlush(history);
 
-        return mapper.toDTO(saved);
+        // ✅ Convert to DTO
+        return ListeningHistoryDTO.builder()
+                .historyId(saved.getHistoryId())
+                .userId(user.getUserId())
+                .songId(song.getSongId())
+                .playedAt(saved.getPlayedAt())
+                .actionType(saved.getActionType().name())
+                .build();
     }
 
+    // ---------------- GET USER HISTORY ----------------
     @Override
     public List<ListeningHistoryDTO> getUserHistory(Long userId) {
-        return historyRepository.findByUser_UserIdOrderByPlayedAtDesc(userId)
+        return historyRepo.findByUser_UserIdOrderByPlayedAtDesc(userId)
                 .stream()
-                .map(mapper::toDTO)
+                .map(h -> ListeningHistoryDTO.builder()
+                        .historyId(h.getHistoryId())
+                        .userId(h.getUser().getUserId())
+                        .songId(h.getSong().getSongId())
+                        .playedAt(h.getPlayedAt())
+                        .actionType(h.getActionType().name())
+                        .build())
                 .collect(Collectors.toList());
     }
 
+    // ---------------- GET RECENT 50 HISTORY ----------------
     @Override
     public List<ListeningHistoryDTO> getRecentUserHistory(Long userId) {
-        return historyRepository.findTop10ByUser_UserIdOrderByPlayedAtDesc(userId)
+        return historyRepo.findTop50ByUser_UserIdOrderByPlayedAtDesc(userId)
                 .stream()
-                .map(mapper::toDTO)
+                .map(h -> ListeningHistoryDTO.builder()
+                        .historyId(h.getHistoryId())
+                        .userId(h.getUser().getUserId())
+                        .songId(h.getSong().getSongId())
+                        .playedAt(h.getPlayedAt())
+                        .actionType(h.getActionType().name())
+                        .build())
                 .collect(Collectors.toList());
     }
 
-
+    // ---------------- GET USER PLAY COUNT ----------------
     @Override
-    public long getUserPlayCount(Long userId) {
-        return historyRepository.countByUser_UserId(userId);
+    public Long getUserPlayCount(Long userId) {
+        return historyRepo.countByUser_UserId(userId);
     }
 
+    // ---------------- GET TOP PLAYED SONGS ----------------
     @Override
     public List<Object[]> getTopPlayedSongs() {
-        return historyRepository.findTopPlayedSongs();
+        return historyRepo.findTopPlayedSongs();
     }
 
+    // ---------------- CLEAR USER HISTORY ----------------
     @Override
     public void clearUserHistory(Long userId) {
-        historyRepository.deleteByUser_UserId(userId);
+        historyRepo.deleteByUser_UserId(userId);
     }
 }

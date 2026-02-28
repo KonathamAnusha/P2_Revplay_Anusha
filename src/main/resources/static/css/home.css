@@ -1,29 +1,111 @@
-body {
-    background: #121212;
-    color: #ffffff;
-    font-family: 'Arial', sans-serif;
-}
+/* Home Page Custom Styles */
 
-.navbar {
-    background-color: #1db954 !important;
+body {
+    background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .navbar-brand {
     font-weight: bold;
-    font-size: 26px;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
 }
 
-.container h1 {
+.hero-text {
+    margin-top: 80px;
+    margin-bottom: 50px;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.hero-text p {
+    font-size: 1.3rem;
+}
+
+.music-card img {
+    border-radius: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.music-card img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+}
+
+.music-row {
     margin-top: 40px;
-    font-size: 48px;
 }
 
-.container p.lead {
-    font-size: 20px;
-    margin-bottom: 30px;
+.btn-outline-light {
+    transition: 0.3s;
 }
 
-.container img {
-    margin-bottom: 20px;
-    border-radius: 12px;
+.btn-outline-light:hover {
+    background-color: #1db954;
+    color: #fff;
+    border-color: #1db954;
+}
+
+/* Elegant gradient background */
+body {
+    background: linear-gradient(135deg, #1a1a2e, #162447, #1f4068);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: rgba(30, 30, 50, 0.95) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+/* Navbar Brand */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+/* Buttons */
+.btn-outline-light {
+    border: 1px solid #1db954;
+    color: #1db954;
+    transition: 0.3s;
+}
+.btn-outline-light:hover {
+    background-color: #1db954;
+    color: #fff;
+}
+
+/* Hero section text */
+.hero-text {
+    margin-top: 80px;
+    margin-bottom: 50px;
+}
+.hero-text h1 {
+    font-size: 3rem;
+}
+.hero-text p {
+    font-size: 1.4rem;
+}
+
+/* Music cards */
+.music-card img {
+    border-radius: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+}
+.music-card img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.8);
+}
+
+/* Section spacing */
+.music-row {
+    margin-top: 50px;
+    margin-bottom: 50px;
 }

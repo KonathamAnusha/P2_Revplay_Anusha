@@ -1,6 +1,7 @@
 package com.rev.restcontroller;
 
 import com.rev.dto.UserDTO;
+import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.UserMapper;
 import com.rev.service.UserServiceInterface;
@@ -24,6 +25,15 @@ public class UserRestController {
     public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO dto) {
         UserAccount saved = userService.registerUser(dto);
         return ResponseEntity.ok(userMapper.toDTO(saved));
+    }
+
+
+    // ------------------- LOGIN USER -------------------
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> loginUser(@RequestParam String emailOrUsername,
+                                             @RequestParam String password) {
+        UserAccount user = userService.login(emailOrUsername, password);
+        return ResponseEntity.ok(userMapper.toDTO(user));
     }
 
     // ------------------- GET ALL USERS -------------------
@@ -80,5 +90,11 @@ public class UserRestController {
                                                 @RequestParam String status) {
         UserAccount updated = userService.changeUserStatus(id, status);
         return ResponseEntity.ok(userMapper.toDTO(updated));
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<UserStatsDTO> getUserStats(@PathVariable Long id) {
+        UserStatsDTO stats = userService.getUserStats(id);
+        return ResponseEntity.ok(stats);
     }
 }

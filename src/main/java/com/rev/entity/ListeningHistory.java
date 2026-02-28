@@ -33,8 +33,10 @@ public class ListeningHistory {
     private ActionType actionType; // PLAY, SKIP, PAUSE
 
     @PrePersist
-    protected void onPlay() {
-        this.playedAt = LocalDateTime.now();
+    protected void prePersist() {
+        if (this.playedAt == null) {
+            this.playedAt = LocalDateTime.now();
+        }
         if (this.actionType == null) {
             this.actionType = ActionType.PLAY; // default
         }

@@ -1,0 +1,35 @@
+/* profile.css */
+body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.container {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 10px;
+    margin-top: 50px;
+    max-width: 600px;
+}
+
+input.form-control, textarea.form-control {
+    background-color: #2c2c2c;
+    color: #fff;
+    border: none;
+}
+
+input.form-control:focus, textarea.form-control:focus {
+    background-color: #2c2c2c;
+    color: #fff;
+    box-shadow: none;
+}
+
+button.btn-success {
+    background-color: #1db954;
+    border: none;
+}
+
+button.btn-success:hover {
+    background-color: #1ed760;
+}

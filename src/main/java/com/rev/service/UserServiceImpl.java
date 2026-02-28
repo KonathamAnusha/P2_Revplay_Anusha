@@ -1,8 +1,12 @@
 package com.rev.service;
 
 import com.rev.dto.UserDTO;
+import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.UserMapper;
+import com.rev.repository.FavoriteRepository;
+import com.rev.repository.ListeningHistoryRepository;
+import com.rev.repository.PlaylistRepository;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserServiceInterface {
 
+    private final PlaylistRepository playlistRepository;
+    private final FavoriteRepository favoriteSongRepository;
+    private final ListeningHistoryRepository listeningHistoryRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -23,6 +30,10 @@ public class UserServiceImpl implements UserServiceInterface {
     public UserAccount registerUser(UserDTO dto) {
         if (dto.getPassword() == null || dto.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+
+        if(userRepository.findByEmail(dto.getEmail()).isPresent()){
+            throw new RuntimeException("Email already registered");
         }
 
         UserAccount user = userMapper.toEntity(dto);
@@ -110,5 +121,19 @@ public class UserServiceImpl implements UserServiceInterface {
     public void deleteUserByEmail(String email) {
         UserAccount user = getUserByEmail(email);
         userRepository.delete(user);
+    }
+
+
+    // -------------------- NEW: ACCOUNT STATISTICS --------------------
+    @Override
+    public UserStatsDTO getUserStats(Long userId) {
+        // Ensure user exists
+        UserAccount user = getUserById(userId);
+
+        int totalPlaylists = playlistRepository.countByOwnerId(userId);
+        int favoriteSongs = favoriteSongRepository.countByUserId(userId);
+        Long totalListeningTime = listeningHistoryRepository.sumDurationByUserId(userId);
+
+        return new UserStatsDTO(totalPlaylists, favoriteSongs, totalListeningTime);
     }
 }
