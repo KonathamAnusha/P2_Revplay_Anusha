@@ -39,9 +39,6 @@ public class ArtistProfile {
  private String bio;
 
  @Column(nullable = false)
- private String profilePic;
-
- @Column(nullable = false)
  private String bannerImage;
 
  @Column

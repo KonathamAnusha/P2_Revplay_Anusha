@@ -17,7 +17,6 @@ public class ArtistMapper {
                 .stageName(dto.getStageName())
                 .genre(dto.getGenre())
                 .bio(dto.getBio())
-                .profilePic(dto.getProfilePic())
                 .bannerImage(dto.getBannerImage())
                 .instagram(dto.getInstagram())
                 .twitter(dto.getTwitter())
@@ -35,7 +34,6 @@ public class ArtistMapper {
                 .stageName(entity.getStageName())
                 .genre(entity.getGenre())
                 .bio(entity.getBio())
-                .profilePic(entity.getProfilePic())
                 .bannerImage(entity.getBannerImage())
                 .instagram(entity.getInstagram())
                 .twitter(entity.getTwitter())
@@ -60,7 +58,6 @@ public class ArtistMapper {
         if (dto.getStageName() != null) entity.setStageName(dto.getStageName());
         if (dto.getGenre() != null) entity.setGenre(dto.getGenre());
         if (dto.getBio() != null) entity.setBio(dto.getBio());
-        if (dto.getProfilePic() != null) entity.setProfilePic(dto.getProfilePic());
         if (dto.getBannerImage() != null) entity.setBannerImage(dto.getBannerImage());
         if (dto.getInstagram() != null) entity.setInstagram(dto.getInstagram());
         if (dto.getTwitter() != null) entity.setTwitter(dto.getTwitter());

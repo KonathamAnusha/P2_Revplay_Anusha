@@ -40,7 +40,6 @@ public class ArtistServiceImpl implements ArtistServiceInterface {
             profile.setStageName(dto.getStageName());
             profile.setGenre(dto.getGenre());
             profile.setBio(dto.getBio());
-            profile.setProfilePic(dto.getProfilePic());
             profile.setBannerImage(dto.getBannerImage());
             profile.setInstagram(dto.getInstagram());
             profile.setTwitter(dto.getTwitter());
