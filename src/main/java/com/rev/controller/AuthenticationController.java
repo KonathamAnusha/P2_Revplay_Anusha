@@ -46,6 +46,7 @@ public class AuthenticationController {
     // ================= LOGIN =================
     @GetMapping("/login")
     public String showLoginForm(Model model) {
+
         return "User_Login"; // Must match Thymeleaf file
     }
 
