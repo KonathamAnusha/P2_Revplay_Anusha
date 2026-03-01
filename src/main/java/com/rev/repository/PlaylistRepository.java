@@ -45,5 +45,5 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     List<Playlist> findByUser_UserIdAndNameContainingIgnoreCase(Long userId, String name);
 
     @Query("SELECT COUNT(p) FROM Playlist p WHERE p.user.userId = :userId")
-    int countByOwnerId(@Param("userId") Long userId);
+    int countByUserId(@Param("userId") Long userId);
 }

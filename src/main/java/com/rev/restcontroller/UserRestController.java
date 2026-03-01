@@ -5,6 +5,7 @@ import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.UserMapper;
 import com.rev.service.UserServiceInterface;
+import com.rev.service.UserStatsServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class UserRestController {
 
     private final UserServiceInterface userService;
     private final UserMapper userMapper;
+    private final UserStatsServiceInterface userStatsService;
 
     // ------------------- REGISTER USER -------------------
     @PostMapping("/register")
@@ -83,18 +85,16 @@ public class UserRestController {
     }
 
 
-
     // ------------------- CHANGE STATUS -------------------
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<UserDTO> changeStatus(@PathVariable Long id,
-                                                @RequestParam String status) {
-        UserAccount updated = userService.changeUserStatus(id, status);
-        return ResponseEntity.ok(userMapper.toDTO(updated));
-    }
-
-    @GetMapping("/{id}/stats")
-    public ResponseEntity<UserStatsDTO> getUserStats(@PathVariable Long id) {
-        UserStatsDTO stats = userService.getUserStats(id);
-        return ResponseEntity.ok(stats);
+//    @PatchMapping("/{id}/status")
+//    public ResponseEntity<UserDTO> changeStatus(@PathVariable Long id,
+//                                                @RequestParam String status) {
+//        UserAccount updated = userService.changeUserStatus(id, status);
+//        return ResponseEntity.ok(userMapper.toDTO(updated));
+//    }
+//
+    @GetMapping("/{userId}/stats")
+    public UserStatsDTO getUserStats(@PathVariable Long userId) {
+        return userStatsService.getUserStats(userId);
     }
 }

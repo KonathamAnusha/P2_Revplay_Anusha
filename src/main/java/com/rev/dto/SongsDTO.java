@@ -12,6 +12,7 @@ public class SongsDTO {
     private int duration;
     private String songUrl;
     private String language;
+    private Boolean isPublic;
     private Long artistId;
     private Long albumId;
 }

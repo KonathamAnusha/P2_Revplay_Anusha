@@ -11,6 +11,7 @@ public class SongsMapper {
 
     public SongsDTO toDTO(Songs songs) {
         if (songs == null) return null;
+
         return SongsDTO.builder()
                 .songId(songs.getSongId())
                 .title(songs.getTitle())
@@ -18,6 +19,7 @@ public class SongsMapper {
                 .duration(songs.getDuration())
                 .songUrl(songs.getSongUrl())
                 .language(songs.getLanguage())
+                .isPublic(songs.getIsPublic())   //
                 .artistId(songs.getArtist() != null ? songs.getArtist().getArtistId() : null)
                 .albumId(songs.getAlbum() != null ? songs.getAlbum().getAlbumId() : null)
                 .build();
@@ -25,6 +27,7 @@ public class SongsMapper {
 
     public Songs toEntity(SongsDTO dto, ArtistProfile artist, Album album) {
         if (dto == null) return null;
+
         return Songs.builder()
                 .title(dto.getTitle())
                 .genre(dto.getGenre())
@@ -33,6 +36,7 @@ public class SongsMapper {
                 .language(dto.getLanguage())
                 .artist(artist)
                 .album(album)
+                .isPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true) // ✅ FIXED
                 .build();
     }
 }

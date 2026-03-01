@@ -28,4 +28,11 @@ public interface SongsServiceInterface {
 
     List<SongsDTO> getLatestSongs();
 
+    SongsDTO removeSongFromAlbum(Long songId);
+
+    void incrementPlayCount(Long songId);
+
+
+
+
 }

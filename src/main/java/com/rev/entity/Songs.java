@@ -40,6 +40,12 @@ public class Songs {
     @JoinColumn(name = "album_id")
     private Album album;
 
+    @Column(nullable = false)
+    private Boolean isPublic = true;
+
+    @Column(nullable = false)
+    private Long playCount = 0L;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

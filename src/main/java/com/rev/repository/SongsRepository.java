@@ -29,4 +29,6 @@ public interface SongsRepository extends JpaRepository<Songs, Long> {
 
     // Get songs not in any album (singles)
     List<Songs> findByAlbumIsNull();
+
+    List<Songs> findByIsPublicTrue();
 }

@@ -75,6 +75,16 @@ public class SongsServiceImpl implements SongsServiceInterface {
     }
 
     @Override
+    public SongsDTO removeSongFromAlbum(Long songId) {
+        Songs song = songsRepository.findById(songId)
+                .orElseThrow(() -> new RuntimeException("Song not found"));
+
+        song.setAlbum(null);
+
+        return songsMapper.toDTO(songsRepository.save(song));
+    }
+
+    @Override
     public List<SongsDTO> getAllSongs() {
         return songsRepository.findAll().stream()
                 .map(songsMapper::toDTO)
@@ -123,4 +133,13 @@ public class SongsServiceImpl implements SongsServiceInterface {
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public void incrementPlayCount(Long songId) {
+        Songs song = songsRepository.findById(songId)
+                .orElseThrow(() -> new RuntimeException("Song not found"));
+
+        song.setPlayCount(song.getPlayCount() + 1);
+        songsRepository.save(song);
+    }
 }

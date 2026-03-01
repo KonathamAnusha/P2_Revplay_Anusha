@@ -1,6 +1,7 @@
 package com.rev.restcontroller;
 
 import com.rev.dto.AlbumDTO;
+import com.rev.dto.SongsDTO;
 import com.rev.service.AlbumServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,12 @@ public class AlbumRestController {
     private AlbumServiceInterface albumService;
 
     // Create album
-    @PostMapping
-    public AlbumDTO createAlbum(@RequestBody AlbumDTO albumDTO) {
-        return albumService.createAlbum(albumDTO);
+    @PostMapping("/artists/{artistId}/albums")
+    public AlbumDTO createAlbum(
+            @PathVariable Long artistId,
+            @RequestBody AlbumDTO albumDTO) {
+
+        return albumService.createAlbum(artistId, albumDTO);
     }
 
     // Update album
@@ -54,5 +58,23 @@ public class AlbumRestController {
     @GetMapping("/search")
     public List<AlbumDTO> searchAlbums(@RequestParam String name) {
         return albumService.searchAlbumsByName(name);
+    }
+
+    // Add song to album
+    @PostMapping("/{albumId}/songs/{songId}")
+    public void addSongToAlbum(@PathVariable Long albumId, @PathVariable Long songId) {
+        albumService.addSongToAlbum(albumId, songId);
+    }
+
+    // Remove song from album
+    @DeleteMapping("/{albumId}/songs/{songId}")
+    public void removeSongFromAlbum(@PathVariable Long albumId, @PathVariable Long songId) {
+        albumService.removeSongFromAlbum(albumId, songId);
+    }
+
+    // Get all songs in album
+    @GetMapping("/{albumId}/songs")
+    public List<SongsDTO> getAlbumSongs(@PathVariable Long albumId) {
+        return albumService.getAlbumSongs(albumId);
     }
 }

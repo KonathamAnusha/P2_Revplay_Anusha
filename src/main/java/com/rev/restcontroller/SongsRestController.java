@@ -4,6 +4,7 @@ import com.rev.dto.SongsDTO;
 import com.rev.dto.SongsDTO;
 import com.rev.service.SongsServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +52,11 @@ public class SongsRestController {
         return songsService.getSongsByArtist(artistId);
     }
 
+    @PutMapping("/{id}/remove-from-album")
+    public ResponseEntity<SongsDTO> removeFromAlbum(@PathVariable Long id) {
+        return ResponseEntity.ok(songsService.removeSongFromAlbum(id));
+    }
+
     // Get songs by album
     @GetMapping("/album/{albumId}")
     public List<SongsDTO> getSongsByAlbum(@PathVariable Long albumId) {
@@ -82,4 +88,10 @@ public class SongsRestController {
     }
 
 
+
+    @PostMapping("/{id}/play")
+    public ResponseEntity<Void> playSong(@PathVariable Long id) {
+        songsService.incrementPlayCount(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -9,6 +9,9 @@ import com.rev.repository.ListeningHistoryRepository;
 import com.rev.repository.PlaylistRepository;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -124,23 +127,16 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
 
-    // -------------------- NEW: ACCOUNT STATISTICS --------------------
     @Override
-    public UserStatsDTO getUserStats(Long userId) {
+    public UserDetails loadUserByUsername(String email) {
 
-        // Ensure user exists
-        getUserById(userId);
+        UserAccount user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        int totalPlaylists = playlistRepository.countByOwnerId(userId);
-        int favoriteSongs = favoriteSongRepository.countByUserId(userId);
-
-        Long totalListeningTime = listeningHistoryRepository.sumDurationByUserId(userId);
-
-        // ✅ Prevent NullPointerException
-        if (totalListeningTime == null) {
-            totalListeningTime = 0L;
-        }
-
-        return new UserStatsDTO(totalPlaylists, favoriteSongs, totalListeningTime);
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPasswordHash(),
+                //List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().)
+        );
     }
 }

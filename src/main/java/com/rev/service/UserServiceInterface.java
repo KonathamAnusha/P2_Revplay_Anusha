@@ -3,6 +3,7 @@ package com.rev.service;
 import com.rev.dto.UserDTO;
 import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -33,5 +34,8 @@ public interface UserServiceInterface {
 
     void deleteUserByEmail(String email);
 
-    UserStatsDTO getUserStats(Long userId);
+//    UserStatsDTO getUserStats(Long userId);
+
+
+    UserDetails loadUserByUsername(String email);
 }

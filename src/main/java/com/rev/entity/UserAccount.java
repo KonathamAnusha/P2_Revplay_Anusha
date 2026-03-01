@@ -33,9 +33,9 @@ public class UserAccount {
     @Column(nullable = false)
     private String passwordHash;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private String role = "LISTENER";
+//    @Builder.Default
+//    @Column(nullable = false)
+//    private String role = "LISTENER";
 
     @Column
     private String displayName;
@@ -71,6 +71,14 @@ public class UserAccount {
             artistProfile.setUserAccount(this);
         }
     }
+
+    public enum Role {
+        LISTENER,
+        ARTIST
+    }
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
 
