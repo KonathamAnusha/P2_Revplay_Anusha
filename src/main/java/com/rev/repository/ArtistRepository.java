@@ -10,7 +10,8 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface ArtistRepository extends JpaRepository<ArtistProfile, Long> {
+public interface
+ArtistRepository extends JpaRepository<ArtistProfile, Long> {
 
     // ================= BASIC FINDERS =================
     Optional<ArtistProfile> findByUserAccountUserId(Long userId);

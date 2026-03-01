@@ -44,14 +44,15 @@ public interface ListeningHistoryRepository extends JpaRepository<ListeningHisto
     List<Object[]> findTopListenersByArtist(@Param("artistId") Long artistId);
 
     // Play trends grouped by day: returns [date, playCount]
-    @Query("""
-           SELECT FUNCTION('DATE', lh.playedAt) as playDate, COUNT(lh) as playCount
-           FROM ListeningHistory lh
-           WHERE lh.song.artist.artistId = :artistId
-           GROUP BY FUNCTION('DATE', lh.playedAt)
-           ORDER BY playDate
-           """)
-    List<Object[]> findPlayTrendsByArtist(@Param("artistId") Long artistId);
+    @Query(value = """
+       SELECT TRUNC(lh.played_at) AS play_date, COUNT(*) AS play_count
+       FROM listening_history lh
+       JOIN songs s ON s.song_id = lh.song_id
+       WHERE s.artist_id = :artistId
+       GROUP BY TRUNC(lh.played_at)
+       ORDER BY TRUNC(lh.played_at)
+       """, nativeQuery = true)
+    List<Object[]> findPlayTrendsByArtist(@Param("artistId") Long artistId);;
 
 
         // Total plays for all songs of an artist

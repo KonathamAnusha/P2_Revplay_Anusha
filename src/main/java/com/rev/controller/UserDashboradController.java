@@ -29,7 +29,8 @@ public class UserDashboradController {
 
         UserAccount user = (UserAccount) session.getAttribute("loggedUser");
         if (user == null) {
-            return "redirect:/login";  // Not logged in
+            return "redirect:/" +
+                    "login";  // Not logged in
         }
 
         model.addAttribute("user", user);

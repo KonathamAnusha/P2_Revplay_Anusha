@@ -66,7 +66,7 @@ public class ArtistRestController {
         return ResponseEntity.ok("Artist deleted successfully");
     }
 
-    @GetMapping("/{id}/analytics")
+    @GetMapping("/{id}/analytics/basic")
     public ResponseEntity<Map<String, Object>> getArtistAnalytics(@PathVariable Long id) {
         Map<String, Object> analytics = new HashMap<>();
         analytics.put("totalFavorites", artistService.getTotalFavorites(id));
