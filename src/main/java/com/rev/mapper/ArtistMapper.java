@@ -46,7 +46,9 @@ public class ArtistMapper {
             dto.setUserId(entity.getUserAccount().getUserId());
             dto.setFullName(entity.getUserAccount().getFullName());
             dto.setEmail(entity.getUserAccount().getEmail());
-            dto.setRole(entity.getUserAccount().getRole());
+            dto.setRole(entity.getUserAccount().getRole() != null
+                    ? entity.getUserAccount().getRole().name()
+                    : null);
         }
 
         return dto;

@@ -34,8 +34,8 @@ public interface UserServiceInterface {
 
     void deleteUserByEmail(String email);
 
-//    UserStatsDTO getUserStats(Long userId);
 
 
     UserDetails loadUserByUsername(String email);
 }
+

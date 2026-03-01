@@ -44,8 +44,7 @@ public class AlbumServiceImpl implements AlbumServiceInterface {
                 .orElseThrow(() -> new RuntimeException("Artist not found with id: " + artistId));
 
         // 2️⃣ Convert DTO to Entity
-        Album album = albumMapper.toEntity(albumDTO);
-
+        Album album = albumMapper.toEntity(albumDTO, artist);
         // 3️⃣ Set artist to album
         album.setArtist(artist);
 
@@ -134,5 +133,15 @@ public class AlbumServiceImpl implements AlbumServiceInterface {
         return album.getSongs().stream()
                 .map(songMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void incrementPlayCount(Long songId) {
+        Album album = albumRepository.findById(songId)
+                .orElseThrow(() -> new RuntimeException("Album not found"));
+
+        album.setPlayCount(album.getPlayCount() + 1);
+
+        albumRepository.save(album);
     }
 }

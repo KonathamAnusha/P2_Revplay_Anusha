@@ -5,6 +5,8 @@ import com.rev.entity.ArtistProfile;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.ArtistMapper;
 import com.rev.repository.ArtistRepository;
+import com.rev.repository.FavoriteRepository;
+import com.rev.repository.ListeningHistoryRepository;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class ArtistServiceImpl implements ArtistServiceInterface {
     private final ArtistRepository artistRepository;
     private final UserRepository userRepository;
     private final ArtistMapper artistMapper;
+    private final FavoriteRepository favoriteRepository;
+    private final ListeningHistoryRepository historyRepository;
+
 
     // ------------------- ADD OR UPDATE ARTIST PROFILE -------------------
     @Override
@@ -77,5 +82,23 @@ public class ArtistServiceImpl implements ArtistServiceInterface {
         ArtistProfile profile = artistRepository.findById(artistId)
                 .orElseThrow(() -> new RuntimeException("Artist profile not found"));
         artistRepository.delete(profile);
+    }
+
+
+    @Override
+    public long getTotalFavorites(Long artistId) {
+        return favoriteRepository.countFavoritesByArtist(artistId);
+    }
+
+    @Override
+    public List<Object[]> getTopListeners(Long artistId) {
+        // Returns [userId, playCount] for top listeners
+        return historyRepository.findTopListenersByArtist(artistId);
+    }
+
+    @Override
+    public List<Object[]> getPlayTrends(Long artistId) {
+        // Returns [date, playCount] grouped by day
+        return historyRepository.findPlayTrendsByArtist(artistId);
     }
 }

@@ -1,12 +1,8 @@
 package com.rev.service;
 
 import com.rev.dto.UserDTO;
-import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.UserMapper;
-import com.rev.repository.FavoriteRepository;
-import com.rev.repository.ListeningHistoryRepository;
-import com.rev.repository.PlaylistRepository;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,65 +10,61 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserServiceInterface {
 
-    private final PlaylistRepository playlistRepository;
-    private final FavoriteRepository favoriteSongRepository;
-    private final ListeningHistoryRepository listeningHistoryRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // ================= REGISTRATION =================
     @Override
     public UserAccount registerUser(UserDTO dto) {
-        if (dto.getPassword() == null || dto.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email already in use");
         }
 
-        if(userRepository.findByEmail(dto.getEmail()).isPresent()){
-            throw new RuntimeException("Email already registered");
-        }
-
-        UserAccount user = userMapper.toEntity(dto);
-
-        // Encode password
+        UserAccount user = new UserAccount();
+        user.setFullName(dto.getFullName());
+        user.setEmail(dto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        user.setDisplayName(dto.getDisplayName());
+        user.setBio(dto.getBio());
+        user.setProfilePicture(dto.getProfilePicture());
+
+
+
+        // Role mapping
+        user.setRole(UserAccount.Role.valueOf(dto.getRole().toUpperCase()));
+        user.setStatus("ACTIVE");
 
         return userRepository.save(user);
     }
 
+    @Override
+    public UserAccount login(String email, String password) {
+        UserAccount user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-
-
-        @Override
-        public UserAccount login(String email, String password) {
-
-            UserAccount user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-                throw new RuntimeException("Invalid password");
-            }
-
-            return user;
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new RuntimeException("Invalid email or password");
         }
 
+        return user;
+    }
 
     // ================= READ =================
     @Override
     public List<UserAccount> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public List<UserAccount> getUsersByRole(String role) {
-        return userRepository.findByRole(role);
     }
 
     @Override
@@ -87,23 +79,31 @@ public class UserServiceImpl implements UserServiceInterface {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Override
+    public List<UserAccount> getUsersByRole(String role) {
+        UserAccount.Role r = UserAccount.Role.valueOf(role.toUpperCase());
+        return userRepository.findByRole(r);
+    }
+
     // ================= UPDATE =================
     @Override
     public UserAccount updateUser(Long id, UserDTO dto) {
         UserAccount user = getUserById(id);
 
-        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
+        if (dto.getFullName() != null) user.setFullName(dto.getFullName());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getDisplayName() != null) user.setDisplayName(dto.getDisplayName());
+        if (dto.getBio() != null) user.setBio(dto.getBio());
+        if (dto.getProfilePicture() != null) user.setProfilePicture(dto.getProfilePicture());
 
-        userMapper.updateEntity(user, dto);
         return userRepository.save(user);
     }
 
     @Override
     public UserAccount changeUserRole(Long id, String role) {
         UserAccount user = getUserById(id);
-        user.setRole(role);
+        user.setRole(UserAccount.Role.valueOf(role.toUpperCase()));
         return userRepository.save(user);
     }
 
@@ -117,6 +117,9 @@ public class UserServiceImpl implements UserServiceInterface {
     // ================= DELETE =================
     @Override
     public void deleteUserById(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
         userRepository.deleteById(id);
     }
 
@@ -126,17 +129,16 @@ public class UserServiceImpl implements UserServiceInterface {
         userRepository.delete(user);
     }
 
-
+    // ================= SPRING SECURITY =================
     @Override
     public UserDetails loadUserByUsername(String email) {
-
         UserAccount user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
-                //List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().)
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );
     }
 }

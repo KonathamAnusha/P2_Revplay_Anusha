@@ -10,28 +10,66 @@ import java.util.List;
 @Repository
 public interface ListeningHistoryRepository extends JpaRepository<ListeningHistory, Long> {
 
-    // All history for a user
+    // ---------------- USER HISTORY ----------------
     List<ListeningHistory> findByUser_UserIdOrderByPlayedAtDesc(Long userId);
 
-    // Recent 50 songs
     List<ListeningHistory> findTop50ByUser_UserIdOrderByPlayedAtDesc(Long userId);
 
-    // Total plays for a user
     long countByUser_UserId(Long userId);
 
-    // Top played songs overall
+    void deleteByUser_UserId(Long userId);
+
+    @Query("SELECT COALESCE(SUM(l.song.duration), 0) FROM ListeningHistory l WHERE l.user.userId = :userId")
+    Long sumDurationByUserId(@Param("userId") Long userId);
+
     @Query("""
-           SELECT lh.song.songId, COUNT(lh) as playCount
+
+            SELECT lh.song.songId, COUNT(lh) as playCount
            FROM ListeningHistory lh
            GROUP BY lh.song.songId
            ORDER BY playCount DESC
            """)
     List<Object[]> findTopPlayedSongs();
 
-    // Clear history
-    void deleteByUser_UserId(Long userId);
+    // ---------------- ARTIST DASHBOARD ANALYTICS ----------------
 
-    @Query("SELECT COALESCE(SUM(l.song.duration), 0) FROM ListeningHistory l WHERE l.user.userId = :userId")
-    Long sumDurationByUserId(@Param("userId") Long userId);
+    // Top listeners for an artist: returns [userId, playCount]
+    @Query("""
+           SELECT lh.user.userId, COUNT(lh) as playCount
+           FROM ListeningHistory lh
+           WHERE lh.song.artist.artistId = :artistId
+           GROUP BY lh.user.userId
+           ORDER BY playCount DESC
+           """)
+    List<Object[]> findTopListenersByArtist(@Param("artistId") Long artistId);
 
-}
+    // Play trends grouped by day: returns [date, playCount]
+    @Query("""
+           SELECT FUNCTION('DATE', lh.playedAt) as playDate, COUNT(lh) as playCount
+           FROM ListeningHistory lh
+           WHERE lh.song.artist.artistId = :artistId
+           GROUP BY FUNCTION('DATE', lh.playedAt)
+           ORDER BY playDate
+           """)
+    List<Object[]> findPlayTrendsByArtist(@Param("artistId") Long artistId);
+
+
+        // Total plays for all songs of an artist
+        @Query("""
+           SELECT COUNT(lh)
+           FROM ListeningHistory lh
+           WHERE lh.song.artist.artistId = :artistId
+           """)
+        long countPlaysByArtist(@Param("artistId") Long artistId);
+
+        // Top songs by play count
+        @Query("""
+           SELECT lh.song.songId, lh.song.title, COUNT(lh) AS playCount
+           FROM ListeningHistory lh
+           WHERE lh.song.artist.artistId = :artistId
+           GROUP BY lh.song.songId, lh.song.title
+           ORDER BY playCount DESC
+           """)
+        List<Object[]> findTopSongsByArtist(@Param("artistId") Long artistId);
+
+    }

@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // User not found
+    // -------------------- USER NOT FOUND --------------------
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -23,7 +22,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    // Email already exists
+    // -------------------- EMAIL ALREADY EXISTS --------------------
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<Object> handleEmailExists(EmailAlreadyExistsException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -34,7 +33,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    // Invalid input/data
+    // -------------------- INVALID DATA --------------------
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Object> handleInvalidData(InvalidDataException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -45,7 +44,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    // Catch-all for other exceptions
+    // -------------------- RUNTIME EXCEPTION --------------------
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Runtime Error");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    // -------------------- CATCH ALL --------------------
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAll(Exception ex) {
         Map<String, Object> body = new HashMap<>();
@@ -55,22 +65,4 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Runtime Error");
-        error.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
-
-
 }

@@ -86,13 +86,13 @@ public class UserRestController {
 
 
     // ------------------- CHANGE STATUS -------------------
-//    @PatchMapping("/{id}/status")
-//    public ResponseEntity<UserDTO> changeStatus(@PathVariable Long id,
-//                                                @RequestParam String status) {
-//        UserAccount updated = userService.changeUserStatus(id, status);
-//        return ResponseEntity.ok(userMapper.toDTO(updated));
-//    }
-//
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<UserDTO> changeStatus(@PathVariable Long id,
+                                                @RequestParam String status) {
+        UserAccount updated = userService.changeUserStatus(id, status);
+        return ResponseEntity.ok(userMapper.toDTO(updated));
+    }
+
     @GetMapping("/{userId}/stats")
     public UserStatsDTO getUserStats(@PathVariable Long userId) {
         return userStatsService.getUserStats(userId);

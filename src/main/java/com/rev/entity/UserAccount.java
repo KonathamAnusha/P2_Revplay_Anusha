@@ -77,6 +77,7 @@ public class UserAccount {
         ARTIST
     }
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

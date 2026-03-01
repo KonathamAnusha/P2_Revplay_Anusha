@@ -21,4 +21,8 @@ public interface ArtistServiceInterface {
 
     // Delete artist by artist ID
     void deleteArtist(Long artistId);
+
+    long getTotalFavorites(Long artistId); // Total favorites for all songs of the artist
+    List<Object[]> getTopListeners(Long artistId); // List of users with play counts
+    List<Object[]> getPlayTrends(Long artistId); // Plays per day/week/month
 }
