@@ -42,8 +42,9 @@ public class UserServiceImpl implements UserServiceInterface {
 
 
 
-        // Role mapping
-        user.setRole(UserAccount.Role.valueOf(dto.getRole().toUpperCase()));
+        if (dto.getRole() != null) {
+            user.setRole(dto.getRole()); // no toUpperCase() needed
+        }
         user.setStatus("ACTIVE");
 
         return userRepository.save(user);

@@ -13,7 +13,7 @@
     <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
-    <form th:action="@{/register}" th:object="${userDTO}" method="post">
+    <form th:action="@{/auth/register}" th:object="${userDTO}" method="post">
         <input type="text" th:field="*{fullName}" placeholder="Full Name" class="form-control mb-2" required>
         <input type="email" th:field="*{email}" placeholder="Email" class="form-control mb-2" required>
         <input type="password" th:field="*{password}" placeholder="Password" class="form-control mb-2" required>

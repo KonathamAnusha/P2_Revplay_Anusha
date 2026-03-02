@@ -26,9 +26,7 @@ public class SongsMapper {
     }
 
     public Songs toEntity(SongsDTO dto, ArtistProfile artist, Album album) {
-        if (dto == null) return null;
-
-        return Songs.builder()
+        Songs song = Songs.builder()
                 .title(dto.getTitle())
                 .genre(dto.getGenre())
                 .duration(dto.getDuration())
@@ -36,7 +34,14 @@ public class SongsMapper {
                 .language(dto.getLanguage())
                 .artist(artist)
                 .album(album)
-                .isPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true) // ✅ FIXED
+                .isPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true)
                 .build();
+
+        // Now song exists, safe to use
+        if (song.getPlayCount() == null) {
+            song.setPlayCount(0L);
+        }
+
+        return song;
     }
 }

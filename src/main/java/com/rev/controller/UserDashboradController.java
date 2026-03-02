@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 
 @Controller
@@ -23,28 +22,25 @@ public class UserDashboradController {
     private final FavoriteServiceInterface favoritesService;
     private final PlaylistServiceInterface playlistService;
 
-    // ================= DASHBOARD =================
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
 
         UserAccount user = (UserAccount) session.getAttribute("loggedUser");
         if (user == null) {
-            return "redirect:/" +
-                    "auth/login";  // Not logged in
+            return "redirect:/auth/login"; // redirect if not logged in
         }
 
         model.addAttribute("user", user);
 
-        // ✅ Fetch dashboard data as DTOs
+        // Fetch dashboard data
         List<ListeningHistoryDTO> recentlyPlayed = listeningHistoryService.getRecentUserHistory(user.getUserId());
         List<FavoriteDTO> favorites = favoritesService.getUserFavorites(user.getUserId());
         List<PlaylistDTO> playlists = playlistService.getPlaylistsByUserId(user.getUserId());
 
-        // ✅ Add to model
         model.addAttribute("recentlyPlayed", recentlyPlayed);
         model.addAttribute("favorites", favorites);
         model.addAttribute("playlists", playlists);
 
-        return "UserDashboard";  // Thymeleaf template
+        return "UserDashboard"; // Thymeleaf template
     }
 }

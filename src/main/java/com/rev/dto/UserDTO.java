@@ -1,5 +1,6 @@
 package com.rev.dto;
 
+import com.rev.entity.UserAccount.Role;
 import lombok.*;
 
 @Getter
@@ -12,9 +13,22 @@ public class UserDTO {
     private String fullName;
     private String email;
     private String password;
-    private String role; // LISTENER / ARTIST
+    private Role role; // LISTENER / ARTIST
     private String displayName;
     private String bio;
     private String profilePicture;
-    private ArtistDTO artistProfile; // Optional for ARTIST role
+
+
+    // In UserDTO.java
+    private ArtistProfileDTO artistProfilee = new ArtistProfileDTO();
+
+    @Data
+    public static class ArtistProfileDTO {
+        private String stageName;
+        private String genre;
+        private String bannerImage;
+        private String instagram;
+        private String twitter;
+        private String youtube;
+    }
 }
