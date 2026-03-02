@@ -13,5 +13,6 @@ public class ListeningHistoryDTO {
     private Long userId;
     private Long songId;
     private LocalDateTime playedAt;
-    private String actionType; // e.g., PLAY
+    private String actionType;
+    private int duration;// e.g., PLAY
 }

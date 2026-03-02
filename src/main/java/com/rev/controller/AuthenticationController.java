@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,11 +17,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final UserServiceInterface userService;
+    // ----- REGISTER PROCESS -----
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
+        try {
+            // Only needed if role is ARTIST (already initialized in DTO)
+            userService.registerUser(userDTO);
 
-    // ----- LOGIN PAGE -----
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "User_Login";  // Must exactly match src/main/resources/templates/User_Login.html
+            redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
+            return "redirect:/auth/login";
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "user_register";
+        }
     }
 
     // ----- LOGIN PROCESS -----
@@ -31,49 +43,21 @@ public class AuthenticationController {
                             Model model) {
 
         try {
-            // login returns UserAccount (role included)
             UserAccount user = userService.login(email, password);
 
-            // save logged user in session
+            if (user == null) {
+                model.addAttribute("loginError", "Invalid email or password.");
+                return "User_Login";
+            }
+
+            // Save user in session
             session.setAttribute("loggedUser", user);
 
-            // redirect based on role
-            if (user.getRole() == Role.LISTENER) {
-                return "redirect:/listener/dashboard";
-            } else {
-                return "redirect:/artist/dashboard";
-            }
+            // Single dashboard, content differs based on role
+            return "redirect:/dashboard";
 
         } catch (Exception e) {
             model.addAttribute("loginError", e.getMessage());
             return "User_Login";
         }
-    }
-
-    // ----- REGISTER PAGE -----
-    @GetMapping("/register")
-    public String showRegisterPage(Model model) {
-        model.addAttribute("userDTO", new UserDTO());
-        return "User_Register"; // Must match template
-    }
-
-    // ----- REGISTER PROCESS -----
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute("userDTO") UserDTO userDTO, Model model) {
-        try {
-            userService.registerUser(userDTO);
-            model.addAttribute("successMessage", "Registration successful! Please login.");
-            return "redirect:/auth/login"; // fixed path
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "User_Register";
-        }
-    }
-
-    // ----- LOGOUT -----
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/auth/login";
-    }
-}
+    }}

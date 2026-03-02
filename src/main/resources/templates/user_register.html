@@ -17,10 +17,10 @@
         <input type="text" th:field="*{fullName}" placeholder="Full Name" class="form-control mb-2" required>
         <input type="email" th:field="*{email}" placeholder="Email" class="form-control mb-2" required>
         <input type="password" th:field="*{password}" placeholder="Password" class="form-control mb-2" required>
-        <!-- Listener fields -->
         <input type="text" th:field="*{displayName}" placeholder="Display Name" class="form-control mb-2">
         <textarea th:field="*{bio}" placeholder="Bio" class="form-control mb-2"></textarea>
         <input type="text" th:field="*{profilePicture}" placeholder="Profile Picture URL" class="form-control mb-2">
+
         <select th:field="*{role}" id="roleSelect" class="form-select mb-2">
             <option value="LISTENER">Listener</option>
             <option value="ARTIST">Artist</option>
