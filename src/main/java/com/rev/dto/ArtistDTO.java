@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ArtistDTO {
-    private long artistId;
+    private Long artistId;
     private String stageName;
     private String genre;
     private String bio;

@@ -1,46 +1,39 @@
 package com.rev.service;
 
 import com.rev.dto.ArtistAnalyticsDTO;
+import com.rev.dto.TopListenerDTO;
+import com.rev.dto.TopSongsDTO;
 import com.rev.repository.FavoriteRepository;
 import com.rev.repository.ListeningHistoryRepository;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ArtistAnalyticsServiceImpl implements ArtistAnalyticsService {
 
+
     private final FavoriteRepository favoriteRepository;
+
+    //@Autowired
     private final ListeningHistoryRepository historyRepository;
 
     @Override
     public ArtistAnalyticsDTO getArtistAnalytics(Long artistId) {
 
+        // Total favorites and plays
         long totalFavorites = favoriteRepository.countFavoritesByArtist(artistId);
         long totalPlays = historyRepository.countPlaysByArtist(artistId);
 
-        // Top Songs
-        List<ArtistAnalyticsDTO.TopSongDTO> topSongs = historyRepository.findTopSongsByArtist(artistId)
-                .stream()
-                .map(obj -> ArtistAnalyticsDTO.TopSongDTO.builder()
-                        .songId((Long) obj[0])
-                        .songTitle((String) obj[1])
-                        .playCount(((Number) obj[2]).longValue())
-                        .build())
-                .collect(Collectors.toList());
+        // Top 10 Songs (no need to map manually since repository returns DTOs)
+        List<TopSongsDTO> topSongs = historyRepository.findTopSongsForArtist(artistId, PageRequest.of(0, 10));
 
-        // Top Listeners
-        List<ArtistAnalyticsDTO.TopListenerDTO> topListeners = historyRepository.findTopListenersByArtist(artistId)
-                .stream()
-                .map(obj -> ArtistAnalyticsDTO.TopListenerDTO.builder()
-                        .userId((Long) obj[0])
-                        .userName((String) obj[1])
-                        .playCount(((Number) obj[2]).longValue())
-                        .build())
-                .collect(Collectors.toList());
+        // Top 10 Listeners
+        List<TopListenerDTO> topListeners = historyRepository.findTopListenersForArtist(artistId, PageRequest.of(0, 10));
 
         return ArtistAnalyticsDTO.builder()
                 .totalFavorites(totalFavorites)

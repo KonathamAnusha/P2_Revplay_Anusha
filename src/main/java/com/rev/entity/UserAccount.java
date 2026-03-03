@@ -15,12 +15,8 @@ import java.time.LocalDateTime;
 public class UserAccount {
 
     @Id
-    @SequenceGenerator(
-            name = "user_seq",
-            sequenceName = "USER_SEQ",
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @Column(name = "user_id", updatable = false, nullable = false)
     private Long userId;
 
@@ -33,9 +29,9 @@ public class UserAccount {
     @Column(nullable = false)
     private String passwordHash;
 
-//    @Builder.Default
-//    @Column(nullable = false)
-//    private String role = "LISTENER";
+    // @Builder.Default
+    // @Column(nullable = false)
+    // private String role = "LISTENER";
 
     @Column
     private String displayName;
@@ -53,10 +49,7 @@ public class UserAccount {
     @Column(nullable = false)
     private String status = "ACTIVE";
 
-    @OneToOne(mappedBy = "userAccount",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private ArtistProfile artistProfile;
 
@@ -81,6 +74,9 @@ public class UserAccount {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+    public String getUsername() {
+        return this.email;
+    }
 
 }
+// Triggering rebuild

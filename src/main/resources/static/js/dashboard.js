@@ -1,38 +1,17 @@
-// dashboard.js
+document.addEventListener("DOMContentLoaded", function () {
 
-// Dummy song list for demo
-let songList = ["Song A", "Song B", "Song C"];
-let currentIndex = 0;
-let isPlaying = false;
+    const playButtons = document.querySelectorAll(".play-btn");
 
-// Elements
-let currentSong = document.getElementById('currentSong');
-let playButton = document.querySelector('.player-bar button:nth-child(2)');
+    playButtons.forEach(button => {
+        button.addEventListener("click", function () {
 
-// Update current song display
-function updateSong() {
-    currentSong.textContent = songList[currentIndex] || "No song selected";
-}
-updateSong();
+            const songTitle = this.closest(".song-card")
+                                   .querySelector("h5")
+                                   .innerText;
 
-// Play/pause toggle
-playButton.addEventListener('click', () => {
-    isPlaying = !isPlaying;
-    playButton.textContent = isPlaying ? "⏸" : "▶";
-});
+            alert("Now Playing: " + songTitle);
 
-// Next/Previous
-document.querySelector('.player-bar button:nth-child(1)').addEventListener('click', () => {
-    currentIndex = (currentIndex - 1 + songList.length) % songList.length;
-    updateSong();
-});
+        });
+    });
 
-document.querySelector('.player-bar button:nth-child(3)').addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % songList.length;
-    updateSong();
-});
-
-// Slider (volume or progress)
-document.querySelector('.player-bar input[type="range"]').addEventListener('input', (e) => {
-    console.log("Slider value: ", e.target.value);
 });

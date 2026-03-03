@@ -1,6 +1,10 @@
 package com.rev.service;
 
+import com.rev.dto.ArtistAnalyticsDTO;
 import com.rev.dto.ListeningHistoryDTO;
+import com.rev.dto.TopListenerDTO;
+import com.rev.dto.TopSongsDTO;
+
 import java.util.List;
 
 public interface ListeningHistoryServiceInterface {
@@ -16,4 +20,9 @@ public interface ListeningHistoryServiceInterface {
     List<Object[]> getTopPlayedSongs();
 
     void clearUserHistory(Long userId);
+
+
+    long getTotalPlaysForArtist(Long artistId);
+    List<TopSongsDTO> getTopSongsForArtist(Long artistId);
+    List<TopListenerDTO> getTopListenersForArtist(Long artistId);
 }

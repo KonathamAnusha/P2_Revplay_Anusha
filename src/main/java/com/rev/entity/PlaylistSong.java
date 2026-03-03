@@ -13,7 +13,8 @@ import lombok.*;
 public class PlaylistSong {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "playlist_song_seq", sequenceName = "PLAYLIST_SONG_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "playlist_song_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

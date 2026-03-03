@@ -2,6 +2,7 @@ package com.rev.mapper;
 
 import com.rev.dto.PlaylistDTO;
 import com.rev.entity.Playlist;
+import com.rev.entity.PlaylistSong;
 import com.rev.entity.Songs;
 import com.rev.entity.UserAccount;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,12 @@ public class PlaylistMapper {
         dto.setPrivacy(playlist.getPrivacy());
         dto.setUserId(playlist.getUser() != null ? playlist.getUser().getUserId() : null);
 
-        if (playlist.getSongs() != null) {
+        if (playlist.getPlaylistSongs() != null) {
             dto.setSongIds(
-                    playlist.getSongs().stream()
-                            .map(Songs::getSongId)
-                            .collect(Collectors.toList())
-            );
+                    playlist.getPlaylistSongs().stream()
+                            .sorted((ps1, ps2) -> Integer.compare(ps1.getOrderIndex(), ps2.getOrderIndex()))
+                            .map(ps -> ps.getSong().getSongId())
+                            .collect(Collectors.toList()));
         }
         dto.setCreatedAt(playlist.getCreatedAt());
         return dto;
@@ -39,7 +40,20 @@ public class PlaylistMapper {
         playlist.setDescription(dto.getDescription());
         playlist.setPrivacy(dto.getPrivacy());
         playlist.setUser(user);
-        playlist.setSongs(songs);
+
+        // Initialize playlistSongs
+        if (songs != null) {
+            List<PlaylistSong> psList = new java.util.ArrayList<>();
+            for (int i = 0; i < songs.size(); i++) {
+                PlaylistSong ps = new PlaylistSong();
+                ps.setPlaylist(playlist);
+                ps.setSong(songs.get(i));
+                ps.setOrderIndex(i + 1);
+                psList.add(ps);
+            }
+            playlist.setPlaylistSongs(psList);
+        }
+
         return playlist;
     }
 
@@ -49,6 +63,17 @@ public class PlaylistMapper {
         playlist.setDescription(dto.getDescription());
         playlist.setPrivacy(dto.getPrivacy());
         playlist.setUser(user);
-        playlist.setSongs(songs);
+
+        // Rebuild playlistSongs
+        if (songs != null) {
+            playlist.getPlaylistSongs().clear();
+            for (int i = 0; i < songs.size(); i++) {
+                PlaylistSong ps = new PlaylistSong();
+                ps.setPlaylist(playlist);
+                ps.setSong(songs.get(i));
+                ps.setOrderIndex(i + 1);
+                playlist.getPlaylistSongs().add(ps);
+            }
+        }
     }
 }

@@ -12,8 +12,10 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
     // Get all albums created by a specific artist
     List<Album> findByArtist_ArtistId(Long artistId);
 
+    org.springframework.data.domain.Page<Album> findByArtist_ArtistId(Long artistId,
+            org.springframework.data.domain.Pageable pageable);
+
     // Search albums by title
     List<Album> findByNameContainingIgnoreCase(String name);
-
 
 }

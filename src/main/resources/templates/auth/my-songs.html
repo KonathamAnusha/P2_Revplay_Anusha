@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!-- Cache bust trigger -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Songs - RevPlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/player.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+
+        <div class="flex-grow-1 p-4 content-area-margin overflow-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+                <h4 class="welcome-header mb-0"><i class="fa-solid fa-music text-accent-green"></i> My Songs</h4>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/dashboard/song/add}" class="btn btn-revplay-orange rounded-pill px-4"
+                        title="Upload New Song">
+                        <i class="fa-solid fa-plus me-1"></i> Add New Song
+                    </a>
+                    <a href="/dashboard" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Songs Table -->
+            <div class="card bg-glass border-0 shadow-lg mt-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0 analytics-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4" style="width: 50px;">#</th>
+                                    <th>Track Detail</th>
+                                    <th>Album</th>
+                                    <th class="text-center">Plays</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="song, iter : ${mySongs}">
+                                    <td class="ps-4 text-secondary" th:text="${iter.index + 1}">1</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div
+                                                class="song-icon-circle-sm bg-dark border border-secondary border-opacity-25 overflow-hidden">
+                                                <img th:if="${song.coverArt != null}" th:src="${song.coverArt}"
+                                                    style="width:100%; height:100%; object-fit:cover;"
+                                                    onerror="this.src='/images/image1.png'">
+                                                <i th:if="${song.coverArt == null}"
+                                                    class="fa-solid fa-music text-accent-green"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-white mb-0" th:text="${song.title}">Song Title
+                                                </div>
+                                                <small class="text-secondary"
+                                                    th:text="${song.genre + ' • ' + (song.language != null ? song.language : 'Unknown')}"></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span th:if="${song.albumName != null}"
+                                            class="badge bg-blue-soft text-blue px-2"
+                                            th:text="${song.albumName}">Album</span>
+                                        <span th:if="${song.albumName == null}"
+                                            class="text-muted small italic">Single</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-accent-blue fw-bold"
+                                            th:text="${song.playCount != null ? song.playCount : 0}">0</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a th:href="@{/dashboard/song/toggle-visibility/{id}(id=${song.songId})}"
+                                            class="btn btn-link p-0 text-decoration-none"
+                                            th:classappend="${song.isPublic != null && song.isPublic ? 'text-success' : 'text-warning'}">
+                                            <i
+                                                th:class="${song.isPublic != null && song.isPublic ? 'fa-solid fa-earth-americas' : 'fa-solid fa-lock'}"></i>
+                                            <span class="ms-1 small"
+                                                th:text="${song.isPublic != null && song.isPublic ? 'Public' : 'Private'}"></span>
+                                        </a>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-success rounded-circle js-play-btn p-0"
+                                                style="width:32px; height:32px;" th:data-songid="${song.songId}"
+                                                th:data-title="${song.title}" th:data-artist="${user.fullName}"
+                                                th:data-url="${song.songUrl}"
+                                                th:data-cover="${song.coverArt != null ? song.coverArt : '/images/image1.png'}"
+                                                title="Play Track">
+                                                <i class="fa-solid fa-play" style="font-size: 0.8rem;"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger btn-sm rounded-pill px-2 js-fav-btn"
+                                                th:data-songid="${song.songId}" title="Add to Favorites">
+                                                <i class="fa-solid fa-heart"></i>
+                                            </button>
+                                            <a th:href="@{/dashboard/song/delete/{id}(id=${song.songId})}"
+                                                class="btn btn-link text-danger p-0"
+                                                onclick="return confirm('Permanently delete this track?')">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${mySongs == null || mySongs.isEmpty()}">
+                                    <td colspan="6" class="py-5 text-center">
+                                        <div class="empty-state py-5 border-secondary border-opacity-10">
+                                            <i class="fa-solid fa-headphones fa-3x mb-3 text-muted"></i>
+                                            <h6 class="text-muted">No tracks found</h6>
+                                            <p class="text-muted small">Ready to share your music? Click "Add New Song"
+                                                to start!</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <script th:inline="javascript">
+                const loggedUserId = /*[[${user != null ? user.userId : ''}]]*/ null;
+            </script>
+            <div th:replace="~{auth/music-player :: player}"></div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script th:src="@{/js/player.js}"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Play buttons
+                    document.querySelectorAll('.js-play-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const songId = this.getAttribute('data-songid');
+                            const title = this.getAttribute('data-title');
+                            const artist = this.getAttribute('data-artist');
+                            const url = this.getAttribute('data-url');
+                            const cover = this.getAttribute('data-cover') || '/images/image1.png';
+                            if (typeof playSong === 'function') {
+                                playSong(songId, title, artist, url, cover);
+                            }
+                        });
+                    });
+
+                    // Favorite button
+                    document.querySelectorAll('.js-fav-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            if (!loggedUserId) { alert('Please log in to favorite songs.'); return; }
+                            const songId = this.getAttribute('data-songid');
+                            fetch('/api/favorites?userId=' + loggedUserId + '&songId=' + songId, {
+                                method: 'POST'
+                            })
+                                .then(res => {
+                                    if (res.ok) alert('Added to favorites!');
+                                    else alert('Failed to add. Maybe it is already in your favorites?');
+                                });
+                        });
+                    });
+                });
+            </script>
+</body>
+
+</html>

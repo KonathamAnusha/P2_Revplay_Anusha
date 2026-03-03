@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RevPlay - User Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/player.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- SIDEBAR -->
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-grow-1 p-4 content-area-margin overflow-auto">
+            <div
+                class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-25">
+                <h4 class="welcome-header mb-0">
+                    <i class="fa-solid fa-bolt-lightning text-accent-green me-2"></i>
+                    Welcome back, <span class="text-white fw-bold"
+                        th:text="${user.displayName != null ? user.displayName : user.fullName}"></span>
+                </h4>
+                <div class="d-flex align-items-center gap-3">
+                    <form th:action="@{/dashboard/browse}" method="get" class="d-none d-md-flex">
+                        <div
+                            class="input-group input-group-sm bg-dark rounded-pill border border-secondary border-opacity-25 overflow-hidden">
+                            <span class="input-group-text bg-transparent border-0 text-secondary ps-3"><i
+                                    class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" name="search" placeholder="Search music..."
+                                class="form-control bg-transparent border-0 text-white py-2" style="width: 200px;">
+                        </div>
+                    </form>
+                    <div class="user-profile-sm bg-orange-soft text-orange rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                        style="width: 38px; height: 38px;"
+                        th:text="${#strings.substring(user.email,0,1).toUpperCase()}">U</div>
+                </div>
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="row g-4 mb-5" th:if="${userStats != null}">
+                <div class="col-md-4">
+                    <div class="card bg-glass border-0 shadow-sm h-100 analytics-card">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="stat-icon bg-green-soft text-green"><i class="fa-solid fa-headphones"></i></div>
+                            <div>
+                                <div class="h3 fw-bold text-white mb-0"
+                                    th:text="${userStats.totalListeningTime / 60} + 'm'">0m</div>
+                                <div class="text-secondary small">Total Listening</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-glass border-0 shadow-sm h-100 analytics-card">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="stat-icon bg-pink-soft text-pink"><i class="fa-solid fa-heart"></i></div>
+                            <div>
+                                <div class="h3 fw-bold text-white mb-0" th:text="${userStats.favoriteSongsCount}">0
+                                </div>
+                                <div class="text-secondary small">Favorite Tracks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-glass border-0 shadow-sm h-100 analytics-card">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="stat-icon bg-blue-soft text-blue"><i class="fa-solid fa-layer-group"></i></div>
+                            <div>
+                                <div class="h3 fw-bold text-white mb-0" th:text="${userStats.totalPlaylists}">0</div>
+                                <div class="text-secondary small">Created Playlists</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- RECENTLY PLAYED -->
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="section-title mb-0"><i
+                                class="fa-solid fa-clock-rotate-left me-2 text-accent-blue"></i> Recently Played</h5>
+                        <a href="/dashboard/browse" class="text-secondary small text-decoration-none">View History</a>
+                    </div>
+
+                    <div class="card bg-card border-0 shadow-lg overflow-hidden">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover align-middle mb-0 analytics-table">
+                                    <tbody th:if="${recentlyPlayed != null && !recentlyPlayed.isEmpty()}">
+                                        <tr th:each="history : ${recentlyPlayed}">
+                                            <td class="ps-4" style="width: 60px;">
+                                                <div
+                                                    class="history-icon bg-dark border border-secondary border-opacity-25 rounded">
+                                                    <i class="fa-solid fa-music text-muted small"></i>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="fw-bold text-white mb-0">Record ID: <span
+                                                        th:text="${history.songId}">Song ID</span></div>
+                                                <small class="text-secondary"
+                                                    th:text="${#temporals.format(history.playedAt, 'MMM dd, HH:mm')}"></small>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <button class="btn btn-revplay-sm rounded-pill px-3 js-play-history-btn"
+                                                    th:data-songid="${history.songId}">
+                                                    <i class="fa-solid fa-play me-1"></i> Replay
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody th:if="${recentlyPlayed == null || recentlyPlayed.isEmpty()}">
+                                        <tr>
+                                            <td colspan="3" class="py-5 text-center text-muted">
+                                                <i
+                                                    class="fa-solid fa-compact-disc fa-spin fa-2x mb-3 d-block opacity-25"></i>
+                                                <p class="small">No listening history yet. Start exploring the catalog!
+                                                </p>
+                                                <a href="/dashboard/browse"
+                                                    class="btn btn-revplay-green btn-sm rounded-pill px-4 mt-2">Browse
+                                                    Music</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS / FAVORITES -->
+                <div class="col-lg-4">
+                    <h5 class="section-title mb-3"><i class="fa-solid fa-heart me-2 text-accent-pink"></i> Quick Mix
+                    </h5>
+                    <div class="card bg-glass border-0 shadow-lg mb-4">
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-3">
+                                <div class="favorite-mix-circle mx-auto bg-pink-soft text-pink shadow-lg"><i
+                                        class="fa-solid fa-bolt fa-2x"></i></div>
+                            </div>
+                            <h6 class="text-white fw-bold mb-1">Your Daily Mix</h6>
+                            <p class="text-muted small mb-4">Fresh tracks based on your recent activity.</p>
+                            <button class="btn btn-revplay-pink w-100 rounded-pill fw-bold">
+                                <i class="fa-solid fa-shuffle me-2"></i> Play Mix Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="text-secondary small fw-bold mb-0">YOUR PLAYLISTS</h6>
+                        <a th:href="@{/dashboard/playlists}" class="text-orange small text-decoration-none"><i
+                                class="fa-solid fa-plus-circle"></i></a>
+                    </div>
+                    <div class="list-group list-group-flush bg-transparent rounded shadow-sm">
+                        <div th:each="pl : ${playlists}"
+                            class="list-group-item bg-card border-secondary border-opacity-10 d-flex align-items-center gap-3 px-3 py-2 hover-bg-dark">
+                            <div class="playlist-sq bg-orange-soft text-orange small rounded"><i
+                                    class="fa-solid fa-list-ul"></i></div>
+                            <a th:href="@{/dashboard/playlists/{id}(id=${pl.playlistId})}"
+                                class="text-white text-decoration-none small fw-semibold stretched-link"
+                                th:text="${pl.name}">Playlist</a>
+                        </div>
+                        <div th:if="${playlists == null || playlists.isEmpty()}"
+                            class="p-4 text-center bg-card rounded border border-secondary border-opacity-10">
+                            <p class="text-muted small mb-0">No playlists yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const loggedUserId = /*[[${user.userId}]]*/ null;
+    </script>
+
+    <div th:replace="~{auth/music-player :: player}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/player.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Replay from history
+            document.querySelectorAll('.js-play-history-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const songId = this.getAttribute('data-songid');
+                    // In a real app, you'd fetch song details first. 
+                    // For now, we'll redirect to browse or try to play if we had the URL.
+                    // Since history only has ID, we might need a quick API call.
+                    alert('Replaying song ID: ' + songId + '. Fetching details...');
+                    // location.href = '/dashboard/browse?search=' + songId;
+                });
+            });
+
+            // Favorite button (placeholder for now as history doesn't have all data)
+            document.querySelectorAll('.js-fav-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const songId = this.getAttribute('data-songid');
+                    fetch('/api/favorites/add/' + songId, { method: 'POST' })
+                        .then(res => {
+                            if (res.ok) alert('Added to favorites!');
+                        });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

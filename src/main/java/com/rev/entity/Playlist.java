@@ -15,7 +15,8 @@ import java.util.List;
 public class Playlist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "playlist_seq", sequenceName = "PLAYLIST_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "playlist_seq")
     private Long playlistId;
 
     @Column(nullable = false)
@@ -31,13 +32,8 @@ public class Playlist {
     @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "playlist_songs",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "song_id")
-    )
-    private List<Songs> songs;
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlaylistSong> playlistSongs;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

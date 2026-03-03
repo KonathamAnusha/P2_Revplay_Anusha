@@ -1,0 +1,813 @@
+/* ======= RevPlay Dashboard - Premium Dark Theme ======= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ======= CSS Variables ======= */
+:root {
+    --bg-primary: #000000;
+    --bg-secondary: #050505;
+    --bg-card: #0a0a0a;
+    --bg-card-hover: #1e1e1e;
+    --accent-green: #1db954;
+    --accent-green-light: #1ed760;
+    --accent-blue: #4f8cff;
+    --accent-purple: #a855f7;
+    --accent-pink: #ec4899;
+    --accent-orange: #f97316;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #9ca3af;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-accent: rgba(29, 185, 84, 0.3);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 50px;
+}
+
+/* ======= Base ======= */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ======= Sidebar ======= */
+.sidebar {
+    background: linear-gradient(195deg, #12161f 0%, #0d1017 50%, #101520 100%) !important;
+    width: 200px;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    border-right: 1px solid var(--glass-border);
+    padding: 28px 22px !important;
+    z-index: 10;
+}
+
+.sidebar .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+    padding: 0 4px;
+}
+
+.sidebar .brand-logo .brand-icon {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--accent-green), #15a347);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(29, 185, 84, 0.3);
+}
+
+.sidebar .brand-logo .brand-text {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.sidebar .brand-logo .brand-text span {
+    color: var(--accent-green);
+}
+
+/* ======= Content Area ======= */
+.flex-grow-1 {
+    padding: 24px 40px;
+    background: var(--bg-primary);
+    max-width: calc(100% - 200px);
+}
+
+.content-area-margin {
+    margin-bottom: 110px;
+}
+
+/* ======= Welcome Header ======= */
+.welcome-header {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.welcome-header i {
+    color: var(--accent-green) !important;
+}
+
+/* ======= Search Bar ======= */
+.search-bar-dashboard {
+    background-color: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: var(--radius-full);
+    padding: 10px 22px;
+    width: 300px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-bar-dashboard:focus {
+    background-color: var(--bg-card-hover);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.12);
+    color: #fff;
+}
+
+.search-bar-dashboard::placeholder {
+    color: var(--text-muted);
+}
+
+/* ======= Section Titles ======= */
+.section-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.section-spacer {
+    margin-top: 48px !important;
+}
+
+.text-truncate-elegant {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ======= Stats Cards ======= */
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 14px;
+    text-align: center;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card.listening {
+    background: linear-gradient(145deg, rgba(79, 140, 255, 0.12) 0%, var(--bg-card) 100%);
+    border-color: rgba(79, 140, 255, 0.15);
+}
+
+.stat-card.listening::before {
+    background: linear-gradient(90deg, var(--accent-blue), #6db3f7);
+}
+
+.stat-card.favorites {
+    background: linear-gradient(145deg, rgba(236, 72, 153, 0.12) 0%, var(--bg-card) 100%);
+    border-color: rgba(236, 72, 153, 0.15);
+}
+
+.stat-card.favorites::before {
+    background: linear-gradient(90deg, var(--accent-pink), #f472b6);
+}
+
+.stat-card.playlists {
+    background: linear-gradient(145deg, rgba(29, 185, 84, 0.12) 0%, var(--bg-card) 100%);
+    border-color: rgba(29, 185, 84, 0.15);
+}
+
+.stat-card.playlists::before {
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-green-light));
+}
+
+.stat-card i {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.stat-card.listening i {
+    color: var(--accent-blue) !important;
+}
+
+.stat-card.favorites i {
+    color: var(--accent-pink) !important;
+}
+
+.stat-card.playlists i {
+    color: var(--accent-green) !important;
+}
+
+.stat-card .stat-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.stat-card .stat-label {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+/* ======= General Card Styling ======= */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-body h5,
+.card-body h6 {
+    font-weight: 600;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.3rem;
+}
+
+.card-body small,
+.card-body .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.card-body p {
+    color: var(--text-secondary) !important;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.card-img-top {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* ======= Profile Card (Artist Dashboard) ======= */
+.profile-summary-card {
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.08), var(--bg-card));
+    border: 1px solid rgba(29, 185, 84, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 0;
+}
+
+.profile-summary-card .card-body {
+    padding: 16px 20px;
+}
+
+.profile-summary-card .profile-info h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary) !important;
+}
+
+.profile-summary-card .profile-info .genre-badge {
+    display: inline-block;
+    background: rgba(29, 185, 84, 0.15);
+    color: var(--accent-green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+
+.profile-summary-card .profile-info .bio-text {
+    color: var(--text-secondary) !important;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+/* ======= Song / History Cards ======= */
+.song-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    transition: all 0.25s ease;
+}
+
+.song-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-green);
+    transform: translateX(4px);
+}
+
+.song-card h6 {
+    color: var(--text-primary) !important;
+}
+
+.song-card small {
+    color: var(--text-secondary) !important;
+}
+
+/* ======= Empty State ======= */
+.empty-state {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    padding: 24px 20px;
+    text-align: center;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.empty-state i {
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+.empty-state a {
+    color: var(--accent-green) !important;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.empty-state a:hover {
+    text-decoration: underline;
+}
+
+/* ======= Buttons ======= */
+.btn-revplay {
+    background: linear-gradient(135deg, var(--accent-green), #15a347);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 7px 20px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(29, 185, 84, 0.25);
+}
+
+.btn-revplay:hover {
+    background: linear-gradient(135deg, var(--accent-green-light), var(--accent-green));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.35);
+    color: #fff;
+}
+
+.btn-outline-light {
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    border-color: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-danger {
+    font-weight: 600;
+    border-radius: var(--radius-full);
+}
+
+/* ======= Profile Image ======= */
+.profile-img-dashboard {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 14px;
+    border: 2px solid var(--accent-green);
+    box-shadow: 0 3px 12px rgba(29, 185, 84, 0.2);
+    flex-shrink: 0;
+}
+
+.album-img-dashboard {
+    height: 110px;
+    object-fit: cover;
+}
+
+/* ======= Table Styling ======= */
+.table-dark {
+    --bs-table-bg: var(--bg-card);
+    --bs-table-border-color: var(--glass-border);
+    --bs-table-hover-bg: var(--bg-card-hover);
+    --bs-table-color: var(--text-primary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.table-dark thead th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 10px 14px;
+}
+
+.table-dark tbody td {
+    color: var(--text-primary);
+    padding: 10px 14px;
+    border-color: var(--glass-border);
+    vertical-align: middle;
+}
+
+.table-dark tbody tr {
+    transition: background 0.2s ease;
+}
+
+.table-dark tbody tr:hover {
+    background: var(--bg-card-hover) !important;
+}
+
+/* ======= Form Controls (dark theme) ======= */
+.form-control.bg-dark {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control.bg-dark:focus {
+    background-color: var(--bg-card) !important;
+    border-color: var(--accent-green) !important;
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1) !important;
+    color: #fff !important;
+}
+
+.form-label {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+}
+
+/* ======= Scrollbar ======= */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ======= Action Buttons Row ======= */
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ======= Animations ======= */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.card,
+.song-card {
+    animation: fadeInUp 0.5s ease both;
+}
+
+.stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* ======= Top Bar Profile ======= */
+.profile-img-topbar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-green);
+    box-shadow: 0 2px 8px rgba(29, 185, 84, 0.2);
+}
+
+.profile-img-topbar-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-green);
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
+}
+
+/* ======= Song Card Compact ======= */
+.song-card-compact {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.song-card-compact:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.song-icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green), #17a34a);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.song-play-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+.song-fav-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+/* ======= Smaller Green Button ======= */
+.btn-revplay-sm {
+    background: var(--accent-green);
+    color: #000;
+    border: none;
+    font-weight: 600;
+    font-size: 0.72rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-revplay-sm:hover {
+    background: #17a34a;
+    color: #000;
+    transform: translateY(-1px);
+}
+
+/* ======= Orange stat card ======= */
+.stat-card-orange {
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.12) 0%, var(--bg-card) 100%) !important;
+    border-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+.stat-card-orange i {
+    color: #f97316 !important;
+}
+
+/* ======= No Results Message ======= */
+.no-results-msg {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: none;
+}
+
+.no-results-msg i {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* ======= Dashboard Actions ======= */
+.dashboard-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ======= Analytics Tables ======= */
+.analytics-table {
+    font-size: 0.82rem;
+}
+
+.analytics-table thead th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.analytics-table tbody td {
+    padding: 6px 10px;
+    border-color: var(--glass-border);
+}
+
+/* ======= Accent Color Utilities ======= */
+.text-accent-green {
+    color: var(--accent-green) !important;
+}
+
+.text-accent-blue {
+    color: var(--accent-blue) !important;
+}
+
+.text-accent-purple {
+    color: var(--accent-purple) !important;
+}
+
+/* ======= Alert Overrides for Dark Theme ======= */
+.alert-success {
+    background: rgba(29, 185, 84, 0.15);
+    border-color: rgba(29, 185, 84, 0.3);
+    color: var(--accent-green);
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.bg-blue-soft {
+    background: rgba(79, 140, 255, 0.15);
+    color: #4f8cff;
+}
+
+/* ======= Responsive Layout ======= */
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        min-height: auto !important;
+        position: relative;
+    }
+
+    .flex-grow-1 {
+        padding: 16px;
+    }
+
+    .welcome-header {
+        font-size: 1.2rem;
+    }
+
+    .search-bar-dashboard {
+        width: 100%;
+    }
+
+    .dashboard-actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* ======= Mini Song Icon ======= */
+.song-icon-circle-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green), #17a34a);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.65rem;
+}
+
+/* ======= Mini Play/Fav Buttons ======= */
+.song-play-btn-sm {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+}
+
+.song-fav-btn-sm {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+}
+
+/* ======= Mini Stat Cards ======= */
+.mini-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.mini-stat-card i {
+    font-size: 0.8rem;
+}
+
+.mini-stat-val {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.mini-stat-lbl {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Pagination Styles */
+.pagination-revplay .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    background-color: var(--bg-card) !important;
+    border-color: var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease;
+}
+
+.pagination-revplay .page-item.active .page-link {
+    background-color: var(--accent-green) !important;
+    border-color: var(--accent-green) !important;
+    color: #000 !important;
+}
+
+.pagination-revplay .page-link:hover {
+    background-color: var(--bg-card-hover) !important;
+    color: var(--accent-green) !important;
+}
+
+.pagination-revplay .page-item.disabled .page-link {
+    background-color: var(--bg-primary) !important;
+    border-color: var(--glass-border) !important;
+    color: var(--text-muted) !important;
+    opacity: 0.5;
+}

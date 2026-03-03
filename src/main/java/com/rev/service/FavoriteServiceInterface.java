@@ -23,4 +23,6 @@ public interface FavoriteServiceInterface {
 
     // Count total favorites for an artist
     long getArtistTotalFavorites(Long artistId);
+
+    long getTotalFavoritesForArtist(Long artistId);
 }

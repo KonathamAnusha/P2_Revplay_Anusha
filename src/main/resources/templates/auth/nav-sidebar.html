@@ -1,0 +1,171 @@
+<!-- Sidebar Navigation Fragment -->
+<div th:fragment="sidebar" class="sidebar p-4 bg-dark text-white shadow" style="min-height: 100vh; width: 200px;">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .nav-link {
+            color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 11px 16px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.92rem;
+            display: flex !important;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(29, 185, 84, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-link i {
+            width: 22px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar {
+            background: linear-gradient(195deg, #12161f 0%, #0d1017 50%, #101520 100%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .sidebar-section {
+            color: #4a5568;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 28px 0 10px 16px;
+        }
+
+        /* Brand Logo */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+            padding: 0 4px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #1db954, #15a347);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(29, 185, 84, 0.3);
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-text span {
+            color: #1db954;
+        }
+
+        /* Logout Button */
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            border-radius: 12px;
+            padding: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+    </style>
+
+    <!-- Brand Logo -->
+    <div class="brand-logo">
+        <div class="brand-icon">
+            <i class="fa-solid fa-headphones"></i>
+        </div>
+        <div class="brand-text">Rev<span>Play</span></div>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="mb-4">
+        <a th:href="@{/dashboard}" class="nav-link text-decoration-none d-block"><i class="fa-solid fa-house me-3"></i>
+            Home</a>
+        <a th:href="@{/dashboard/browse}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-compass me-3"></i> Browse</a>
+    </div>
+
+    <!-- Listener Library -->
+    <div th:if="${role != null && role.toString() == 'LISTENER'}" class="mb-4">
+        <div class="sidebar-section">Your Library</div>
+        <a th:href="@{/dashboard/favorites}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-heart me-3" style="color: #ec4899;"></i> Favorites</a>
+        <a th:href="@{/dashboard/playlists}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-folder-open me-3" style="color: #f97316;"></i> Playlists</a>
+        <a th:href="@{/dashboard/history}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-clock-rotate-left me-3" style="color: #4f8cff;"></i> History</a>
+    </div>
+
+    <!-- Artist Library + Tools -->
+    <div th:if="${role != null && role.toString() == 'ARTIST'}" class="mb-4">
+        <div class="sidebar-section">Your Library</div>
+        <a th:href="@{/dashboard/favorites}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-heart me-3" style="color: #ec4899;"></i> Favorites</a>
+        <a th:href="@{/dashboard/playlists}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-folder-open me-3" style="color: #f97316;"></i> Playlists</a>
+        <a th:href="@{/dashboard/history}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-clock-rotate-left me-3" style="color: #4f8cff;"></i> History</a>
+
+        <div class="sidebar-section">My Music</div>
+        <a th:href="@{/dashboard/my-songs}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-music me-3" style="color: #a855f7;"></i> Music Catalog</a>
+        <a th:href="@{/dashboard/my-albums}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-compact-disc me-3" style="color: #06b6d4;"></i> My Albums</a>
+    </div>
+
+    <!-- Account Section -->
+    <div class="mt-auto pt-3">
+        <div class="sidebar-section">Account</div>
+        <a th:href="@{/dashboard/profile/{id}(id=${user.userId})}" class="nav-link text-decoration-none d-block"><i
+                class="fa-solid fa-user-circle me-3" style="color: #64748b;"></i> Profile</a>
+
+        <hr style="border-color: rgba(255,255,255,0.06); margin: 16px 0;">
+        <form th:action="@{/auth/logout}" method="post">
+            <button type="submit" class="btn btn-logout w-100"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>
+                Logout</button>
+        </form>
+    </div>
+</div>

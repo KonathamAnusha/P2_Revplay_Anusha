@@ -18,6 +18,9 @@ public interface SongsServiceInterface {
 
     List<SongsDTO> getSongsByArtist(Long artistId);
 
+    org.springframework.data.domain.Page<SongsDTO> getSongsByArtistPaginated(Long artistId,
+            org.springframework.data.domain.Pageable pageable);
+
     List<SongsDTO> getSongsByAlbum(Long albumId);
 
     List<SongsDTO> searchSongsByTitle(String title);
@@ -31,8 +34,5 @@ public interface SongsServiceInterface {
     SongsDTO removeSongFromAlbum(Long songId);
 
     void incrementPlayCount(Long songId);
-
-
-
 
 }

@@ -4,13 +4,15 @@ import com.rev.dto.UserDTO;
 import com.rev.dto.UserStatsDTO;
 import com.rev.entity.UserAccount;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserServiceInterface {
+public interface UserServiceInterface extends UserDetailsService {
 
     // ================= REGISTRATION =================
     UserAccount registerUser(UserDTO dto);
+
     UserAccount login(String email, String password);
 
     // ================= READ =================
@@ -34,8 +36,5 @@ public interface UserServiceInterface {
 
     void deleteUserByEmail(String email);
 
-
-
     UserDetails loadUserByUsername(String email);
 }
-

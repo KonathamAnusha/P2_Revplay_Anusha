@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Albums - RevPlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+
+        <div class="flex-grow-1 p-3 content-area-margin">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="welcome-header mb-0">
+                    <i class="fa-solid fa-compact-disc"></i> My Albums
+                </h4>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm rounded-pill">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+
+            <!-- Create Album Form -->
+            <div class="mb-3">
+                <button class="btn btn-revplay-sm" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#addAlbumForm">
+                    <i class="fa-solid fa-plus me-1"></i> Create Album
+                </button>
+            </div>
+            <div class="collapse mb-3" id="addAlbumForm">
+                <form th:action="@{/dashboard/album/add}" method="post" class="card card-body p-3">
+                    <div class="row g-2">
+                        <div class="col-md-4 mb-1">
+                            <label class="form-label small mb-1">Album Name</label>
+                            <input type="text" name="name" placeholder="Album Name"
+                                class="form-control form-control-sm bg-dark text-white border-secondary" required>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <label class="form-label small mb-1">Description</label>
+                            <input type="text" name="description" placeholder="Short description"
+                                class="form-control form-control-sm bg-dark text-white border-secondary">
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <label class="form-label small mb-1">Release Date</label>
+                            <input type="date" name="releaseDate"
+                                class="form-control form-control-sm bg-dark text-white border-secondary">
+                        </div>
+                    </div>
+                    <div class="row g-2 mt-1">
+                        <div class="col-md-8 mb-1">
+                            <label class="form-label small mb-1">Cover Art URL</label>
+                            <input type="text" name="coverArt" placeholder="https://..."
+                                class="form-control form-control-sm bg-dark text-white border-secondary">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end mb-1">
+                            <button type="submit" class="btn btn-revplay-sm w-100"><i
+                                    class="fa-solid fa-compact-disc me-1"></i> Create</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Albums List -->
+            <div class="card bg-glass border-0 shadow-lg">
+                <div class="card-body p-0">
+                    <div th:if="${myAlbums == null || myAlbums.isEmpty()}" class="empty-state py-5 text-center">
+                        <i class="fa-solid fa-compact-disc fa-3x mb-3 text-muted"></i>
+                        <h6 class="text-muted">No albums created yet</h6>
+                        <p class="text-muted small">Group your tracks into albums to reach more listeners!</p>
+                    </div>
+                    <div class="table-responsive" th:if="${myAlbums != null && !myAlbums.isEmpty()}">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4" style="width: 70px;">Cover</th>
+                                    <th>Album Name</th>
+                                    <th>Release Date</th>
+                                    <th class="text-center">Description</th>
+                                    <th class="text-center pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="album : ${myAlbums}">
+                                    <td class="ps-4">
+                                        <img th:src="${album.coverArt}" class="rounded shadow-sm"
+                                            style="width:50px; height:50px; object-fit:cover;"
+                                            onerror="this.src='/images/image1.png'">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/dashboard/artist/album/{id}(id=${album.albumId})}"
+                                            class="text-decoration-none text-white fw-bold d-block"
+                                            th:text="${album.name}">Album</a>
+                                    </td>
+                                    <td class="text-secondary" th:text="${album.releaseDate}">Date</td>
+                                    <td class="text-center text-muted small" th:text="${album.description}">Desc</td>
+                                    <td class="text-center pe-4">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a th:href="@{/dashboard/artist/album/{id}(id=${album.albumId})}"
+                                                class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                                <i class="fa-solid fa-pen-to-square me-1"></i>Edit
+                                            </a>
+                                            <a th:href="@{/dashboard/album/delete/{id}(id=${album.albumId})}"
+                                                class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                onclick="return confirm('Delete this album?')">
+                                                <i class="fa-solid fa-trash-can me-1"></i>Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

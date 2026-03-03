@@ -17,7 +17,8 @@ import java.util.List;
 public class Album {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "album_seq", sequenceName = "ALBUM_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "album_seq")
     private Long albumId;
 
     @Column(nullable = false)
@@ -51,4 +52,3 @@ public class Album {
         this.createdAt = LocalDateTime.now();
     }
 }
-

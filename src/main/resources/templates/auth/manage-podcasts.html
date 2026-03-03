@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Podcasts - RevPlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+</head>
+
+<body class="bg-primary text-white">
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+        <div class="flex-grow-1 p-4 content-area-margin">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+                <h4 class="welcome-header mb-0"><i class="fa-solid fa-microphone text-accent-purple"></i> My Podcasts
+                </h4>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+
+            <div class="card bg-glass border-0 shadow-lg">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Podcast</th>
+                                    <th>Genre</th>
+                                    <th class="text-center">Episodes</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${myPodcasts}">
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img th:src="${p.coverImage}" class="rounded"
+                                                style="width:45px; height:45px; object-fit:cover;"
+                                                onerror="this.src='/images/image1.png'">
+                                            <div>
+                                                <div class="fw-bold text-white mb-0" th:text="${p.title}">Podcast Title
+                                                </div>
+                                                <small class="text-muted text-truncate-elegant d-block"
+                                                    style="max-width: 300px;" th:text="${p.description}">Desc</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td th:text="${p.genreName}">Genre</td>
+                                    <td class="text-center" th:text="${p.episodes != null ? p.episodes.size() : 0}">0
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success-soft text-success px-2">Active</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="#" class="btn btn-revplay-sm py-1"><i
+                                                class="fa-solid fa-plus me-1"></i> Episode</a>
+                                        <button class="btn btn-link text-muted p-1"><i
+                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${myPodcasts == null || myPodcasts.isEmpty()}">
+                                    <td colspan="5" class="py-5 text-center text-muted italic">No podcasts created yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{auth/music-player :: player}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

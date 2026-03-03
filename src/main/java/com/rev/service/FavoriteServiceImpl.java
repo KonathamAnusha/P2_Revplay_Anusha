@@ -8,7 +8,6 @@ import com.rev.mapper.FavoriteMapper;
 import com.rev.repository.FavoriteRepository;
 import com.rev.repository.SongsRepository;
 import com.rev.repository.UserRepository;
-import com.rev.service.FavoriteServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +25,7 @@ public class FavoriteServiceImpl implements FavoriteServiceInterface {
     private final SongsRepository songsRepository;
     private final FavoriteMapper favoriteMapper;
 
+    // ------------------- ADD FAVORITE -------------------
     @Override
     public FavoriteDTO addFavorite(Long userId, Long songId) {
 
@@ -44,9 +44,11 @@ public class FavoriteServiceImpl implements FavoriteServiceInterface {
                 .song(song)
                 .build();
 
-        return favoriteMapper.toDTO(favoriteRepository.save(favorite));
+        Favorite savedFavorite = favoriteRepository.save(favorite);
+        return favoriteMapper.toDTO(savedFavorite);
     }
 
+    // ------------------- REMOVE FAVORITE -------------------
     @Override
     public void removeFavorite(Long userId, Long songId) {
         if (!favoriteRepository.existsByUser_UserIdAndSong_SongId(userId, songId)) {
@@ -55,6 +57,7 @@ public class FavoriteServiceImpl implements FavoriteServiceInterface {
         favoriteRepository.deleteByUser_UserIdAndSong_SongId(userId, songId);
     }
 
+    // ------------------- GET ALL FAVORITES OF A USER -------------------
     @Override
     public List<FavoriteDTO> getUserFavorites(Long userId) {
         return favoriteRepository.findByUser_UserId(userId)
@@ -63,6 +66,7 @@ public class FavoriteServiceImpl implements FavoriteServiceInterface {
                 .collect(Collectors.toList());
     }
 
+    // ------------------- GET ALL FAVORITES FOR A SONG -------------------
     @Override
     public List<FavoriteDTO> getFavoritesBySong(Long songId) {
         return favoriteRepository.findBySong_SongId(songId)
@@ -71,13 +75,21 @@ public class FavoriteServiceImpl implements FavoriteServiceInterface {
                 .collect(Collectors.toList());
     }
 
+    // ------------------- GET USER IDS WHO FAVORITED ARTIST -------------------
     @Override
     public List<Long> getUsersWhoFavoritedArtist(Long artistId) {
         return favoriteRepository.findUserIdsWhoFavoritedArtistSongs(artistId);
     }
 
+    // ------------------- GET TOTAL FAVORITES OF AN ARTIST -------------------
     @Override
     public long getArtistTotalFavorites(Long artistId) {
+        return favoriteRepository.countFavoritesByArtist(artistId);
+    }
+
+    // Alias method for clarity
+    @Override
+    public long getTotalFavoritesForArtist(Long artistId) {
         return favoriteRepository.countFavoritesByArtist(artistId);
     }
 }

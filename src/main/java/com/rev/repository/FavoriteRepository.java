@@ -20,32 +20,23 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     // Remove favorite
     void deleteByUser_UserIdAndSong_SongId(Long userId, Long songId);
 
-    // -------------------------
-    // 🔥 CUSTOM METHODS BELOW
-    // -------------------------
-
+    // Remove all favorites for a specific song
+    void deleteBySong_SongId(Long songId);
 
     // Get all favorites of a specific song
     List<Favorite> findBySong_SongId(Long songId);
 
     // Get list of user IDs who favorited a specific artist's songs
-    @Query("""
-
-            SELECT f.user.userId
-           FROM Favorite f
-           WHERE f.song.artist.artistId = :artistId
-           """)
-    List<Long> findUserIdsWhoFavoritedArtistSongs(Long artistId);
+    @Query("SELECT f.user.userId FROM Favorite f WHERE f.song.artist.artistId = :artistId")
+    List<Long> findUserIdsWhoFavoritedArtistSongs(@Param("artistId") Long artistId);
 
     // Count total favorites for all songs of an artist
-    @Query("""
-           SELECT COUNT(f)
-           FROM Favorite f
-           WHERE f.song.artist.artistId = :artistId
-           """)
-    long countFavoritesByArtist(Long artistId);
+    @Query("SELECT COUNT(f) FROM Favorite f WHERE f.song.artist.artistId = :artistId")
+    long countFavoritesByArtist(@Param("artistId") Long artistId);
 
-    // Corrected query using @Query
-    @Query("SELECT COUNT(f) FROM Favorite f WHERE f.user.userId = :userId")
-    int countByUserId(@Param("userId") Long userId);
-    }
+    // Count total favorites of a user
+    int countByUser_UserId(Long userId);
+
+    // Find all favorites of an artist's songs
+    List<Favorite> findBySong_Artist_ArtistId(Long artistId);
+}

@@ -9,7 +9,10 @@ import java.util.List;
 @Repository
 public interface SongsRepository extends JpaRepository<Songs, Long> {
 
-    // Get all songs by a specific artist
+    // Get all songs by a specific artist with pagination
+    org.springframework.data.domain.Page<Songs> findByArtist_ArtistId(Long artistId,
+            org.springframework.data.domain.Pageable pageable);
+
     List<Songs> findByArtist_ArtistId(Long artistId);
 
     // Get all songs in a specific album
@@ -19,7 +22,7 @@ public interface SongsRepository extends JpaRepository<Songs, Long> {
     List<Songs> findByTitleContainingIgnoreCase(String title);
 
     // Filter songs by genre
-    List<Songs> findByGenreContainingIgnoreCase(String genre);
+    List<Songs> findByGenre_NameContainingIgnoreCase(String genre);
 
     // Filter songs by language
     List<Songs> findByLanguageContainingIgnoreCase(String language);

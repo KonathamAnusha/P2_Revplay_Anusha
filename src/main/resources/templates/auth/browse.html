@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse Music - RevPlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/player.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+        <div class="flex-grow-1 p-4 content-area-margin">
+            <h4 class="welcome-header"><i class="fa-solid fa-compass me-2 text-info"></i> Browse Music</h4>
+
+            <!-- Search & Filters -->
+            <div class="row g-3 mb-4 mt-2">
+                <div class="col-md-5">
+                    <form th:action="@{/dashboard/browse}" method="get">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control search-bar-dashboard"
+                                placeholder="Search songs, artists, albums..." th:value="${searchQuery}">
+                            <button class="btn btn-outline-light rounded-end" type="submit"><i
+                                    class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <form th:action="@{/dashboard/browse}" method="get">
+                        <select name="genre" class="form-select bg-dark text-white border-secondary"
+                            onchange="this.form.submit()">
+                            <option value="">All Genres</option>
+                            <option value="Pop" th:selected="${selectedGenre == 'Pop'}">Pop</option>
+                            <option value="Rock" th:selected="${selectedGenre == 'Rock'}">Rock</option>
+                            <option value="Hip-Hop" th:selected="${selectedGenre == 'Hip-Hop'}">Hip-Hop</option>
+                            <option value="Classical" th:selected="${selectedGenre == 'Classical'}">Classical</option>
+                            <option value="Jazz" th:selected="${selectedGenre == 'Jazz'}">Jazz</option>
+                            <option value="Electronic" th:selected="${selectedGenre == 'Electronic'}">Electronic
+                            </option>
+                            <option value="R&B" th:selected="${selectedGenre == 'R&amp;B'}">R&amp;B</option>
+                            <option value="Country" th:selected="${selectedGenre == 'Country'}">Country</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <form th:action="@{/dashboard/browse}" method="get">
+                        <select name="language" class="form-select bg-dark text-white border-secondary"
+                            onchange="this.form.submit()">
+                            <option value="">All Languages</option>
+                            <option value="English" th:selected="${selectedLanguage == 'English'}">English</option>
+                            <option value="Hindi" th:selected="${selectedLanguage == 'Hindi'}">Hindi</option>
+                            <option value="Telugu" th:selected="${selectedLanguage == 'Telugu'}">Telugu</option>
+                            <option value="Tamil" th:selected="${selectedLanguage == 'Tamil'}">Tamil</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ARTIST RESULTS (only when searching) -->
+            <div th:if="${artists != null && !artists.isEmpty()}" class="mb-4">
+                <h5 class="section-title"><i class="fa-solid fa-user me-2 text-primary"></i> Artists</h5>
+                <div class="row g-3">
+                    <div class="col-md-3" th:each="a : ${artists}">
+                        <a th:href="@{/dashboard/artist/{id}(id=${a.artistId})}" class="text-decoration-none">
+                            <div class="card text-center p-3">
+                                <img th:src="${a.profilePic != null ? a.profilePic : '/images/image2.png'}"
+                                    class="rounded-circle mx-auto" style="width:80px;height:80px;object-fit:cover"
+                                    onerror="this.src='/images/image2.png'" alt="Artist">
+                                <h6 class="mt-2 mb-0 text-white" th:text="${a.stageName}">Artist</h6>
+                                <small class="text-muted" th:text="${a.genre}">Genre</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALBUM RESULTS (only when searching) -->
+            <div th:if="${albums != null && !albums.isEmpty()}" class="mb-4">
+                <h5 class="section-title"><i class="fa-solid fa-compact-disc me-2 text-success"></i> Albums</h5>
+                <div class="row g-3">
+                    <div class="col-md-3" th:each="alb : ${albums}">
+                        <a th:href="@{/dashboard/album/{id}(id=${alb.albumId})}" class="text-decoration-none">
+                            <div class="card">
+                                <img th:src="${alb.coverArt != null ? alb.coverArt : '/images/image1.png'}"
+                                    class="card-img-top album-img-dashboard" alt="Album Cover"
+                                    onerror="this.src='/images/image1.png'">
+                                <div class="card-body p-2">
+                                    <h6 class="text-white mb-0" th:text="${alb.name}">Album</h6>
+                                    <small class="text-muted"
+                                        th:text="${alb.releaseDate != null ? alb.releaseDate : ''}"></small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SONGS TABLE -->
+            <h5 class="section-title"><i class="fa-solid fa-music me-2 text-info"></i> Songs</h5>
+            <table id="songsTable" class="table table-dark table-hover" style="border-radius:12px;overflow:hidden">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Album</th>
+                        <th>Genre</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="song, iter : ${songs}" data-song-row
+                        th:attr="data-title=${song.title},data-artist=${song.artistName},data-genre=${song.genre}">
+                        <td th:text="${iter.index + 1}">1</td>
+                        <td>
+                            <a th:href="@{/dashboard/song/{id}(id=${song.songId})}"
+                                class="text-info text-decoration-none" th:text="${song.title}">Song</a>
+                        </td>
+                        <td>
+                            <a th:if="${song.artistId != null}" th:href="@{/dashboard/artist/{id}(id=${song.artistId})}"
+                                class="text-white text-decoration-none"
+                                th:text="${song.artistName != null ? song.artistName : '-'}">Artist</a>
+                            <span th:if="${song.artistId == null}">-</span>
+                        </td>
+                        <td>
+                            <a th:if="${song.albumId != null}" th:href="@{/dashboard/album/{id}(id=${song.albumId})}"
+                                class="text-white text-decoration-none"
+                                th:text="${song.albumName != null ? song.albumName : '-'}">Album</a>
+                            <span th:if="${song.albumId == null}" class="text-muted">Single</span>
+                        </td>
+                        <td th:text="${song.genre}">Genre</td>
+                        <td
+                            th:text="${song.duration / 60 + ':' + (song.duration % 60 < 10 ? '0' : '') + song.duration % 60}">
+                            0:00</td>
+                        <td>
+                            <button class="btn btn-sm btn-success rounded-pill"
+                                th:onclick="playSong([[${song.songId}]], [[${song.title}]], [[${song.artistName != null ? song.artistName : 'Unknown'}]], [[${song.songUrl}]], [[${song.coverArt != null ? song.coverArt : '/images/image1.png'}]])"
+                                title="Play">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill"
+                                th:onclick="'addFavorite(' + ${song.songId} + ')'" title="Favorite">
+                                <i class="fa-solid fa-heart"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${songs == null || songs.isEmpty()}">
+                        <td colspan="7" class="text-center text-muted py-3">
+                            <i class="fa-solid fa-music fa-2x mb-2 d-block"></i>
+                            No songs found. Try a different search or filter.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- No Results Message (hidden by default) -->
+            <div id="noResultsMsg" class="no-results-msg">
+                <i class="fa-solid fa-search"></i>
+                No such songs found. Try a different search.
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{auth/music-player :: player}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/player.js}"></script>
+    <script th:inline="javascript">
+        const loggedUserId = /*[[${user != null ? user.userId : ''}]]*/ null;
+
+        // Build initial queue on load
+        document.addEventListener('DOMContentLoaded', function () {
+            buildQueueFromPage();
+            initLiveSearch();
+        });
+
+        function addFavorite(songId) {
+            fetch('/dashboard/favorites/add/' + songId, { method: 'POST' })
+                .then(res => res.text())
+                .then(data => {
+                    if (data === "Success") alert('Added to favorites!');
+                    else alert(data);
+                });
+        }
+
+        // ===== Live Search =====
+        function initLiveSearch() {
+            const searchInput = document.querySelector('input[name="search"]');
+            const songRows = document.querySelectorAll('#songsTable tbody tr[data-song-row]');
+            const noResults = document.getElementById('noResultsMsg');
+            const tableElement = document.getElementById('songsTable');
+
+            const INITIAL_LIMIT = 8;
+
+            function filter() {
+                const query = searchInput.value.trim().toLowerCase();
+                let visibleCount = 0;
+
+                songRows.forEach((row) => {
+                    const title = (row.getAttribute('data-title') || '').toLowerCase();
+                    const artist = (row.getAttribute('data-artist') || '').toLowerCase();
+                    const genre = (row.getAttribute('data-genre') || '').toLowerCase();
+
+                    const match = query === '' || title.includes(query) || artist.includes(query) || genre.includes(query);
+
+                    if (match) {
+                        // If no query, we limit to INITIAL_LIMIT for performance/aesthetic
+                        if (query === '' && visibleCount >= INITIAL_LIMIT) {
+                            row.style.display = 'none';
+                        } else {
+                            row.style.display = '';
+                            visibleCount++;
+                        }
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Handle Empty States
+                if (visibleCount === 0) {
+                    tableElement.style.display = 'none';
+                    noResults.style.display = 'block';
+                } else {
+                    tableElement.style.display = '';
+                    noResults.style.display = 'none';
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filter);
+                // Initial run
+                filter();
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 public class Favorite {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "favorite_seq", sequenceName = "FAVORITE_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_seq")
     private Long favoriteId;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserDTO {
-    private long userId;
+    private Long userId;
     private String fullName;
     private String email;
     private String password;
@@ -17,19 +17,19 @@ public class UserDTO {
     private String displayName;
     private String bio;
     private String profilePicture;
-    private ArtistDTO artistProfile;
+    @Builder.Default
+    private ArtistDTO artistProfile = new ArtistDTO();
 
+    // // In UserDTO.java
+    // private ArtistProfileDTO artistProfile = new ArtistProfileDTO();
 
-//    // In UserDTO.java
-//    private ArtistProfileDTO artistProfile = new ArtistProfileDTO();
-
-//    @Data
-//    public static class ArtistProfileDTO {
-//        private String stageName;
-//        private String genre;
-//        private String bannerImage;
-//        private String instagram;
-//        private String twitter;
-//        private String youtube;
-//    }
+    // @Data
+    // public static class ArtistProfileDTO {
+    // private String stageName;
+    // private String genre;
+    // private String bannerImage;
+    // private String instagram;
+    // private String twitter;
+    // private String youtube;
+    // }
 }

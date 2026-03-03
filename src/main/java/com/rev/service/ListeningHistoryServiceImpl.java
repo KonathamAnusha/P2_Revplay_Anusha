@@ -1,6 +1,8 @@
 package com.rev.service;
 
 import com.rev.dto.ListeningHistoryDTO;
+import com.rev.dto.TopListenerDTO;
+import com.rev.dto.TopSongsDTO;
 import com.rev.entity.ListeningHistory;
 import com.rev.entity.Songs;
 import com.rev.entity.UserAccount;
@@ -8,6 +10,7 @@ import com.rev.repository.ListeningHistoryRepository;
 import com.rev.repository.SongsRepository;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,22 +24,21 @@ import java.util.stream.Collectors;
 public class ListeningHistoryServiceImpl implements ListeningHistoryServiceInterface {
 
     private final ListeningHistoryRepository historyRepo;
+
     private final UserRepository userRepo;
+
     private final SongsRepository songsRepo;
 
     // ---------------- ADD LISTENING HISTORY ----------------
     @Override
     public ListeningHistoryDTO addListeningHistory(Long userId, Long songId) {
 
-        // ✅ Load user safely
         UserAccount user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        // ✅ Load song safely
         Songs song = songsRepo.findById(songId)
                 .orElseThrow(() -> new RuntimeException("Song not found with ID: " + songId));
 
-        // ✅ Build the history
         ListeningHistory history = ListeningHistory.builder()
                 .user(user)
                 .song(song)
@@ -44,10 +46,8 @@ public class ListeningHistoryServiceImpl implements ListeningHistoryServiceInter
                 .playedAt(LocalDateTime.now())
                 .build();
 
-        // ✅ Save to DB
         ListeningHistory saved = historyRepo.saveAndFlush(history);
 
-        // ✅ Convert to DTO
         return ListeningHistoryDTO.builder()
                 .historyId(saved.getHistoryId())
                 .userId(user.getUserId())
@@ -103,5 +103,24 @@ public class ListeningHistoryServiceImpl implements ListeningHistoryServiceInter
     @Override
     public void clearUserHistory(Long userId) {
         historyRepo.deleteByUser_UserId(userId);
+    }
+
+    // ---------------- ARTIST ANALYTICS ----------------
+
+    @Override
+    public long getTotalPlaysForArtist(Long artistId) {
+        return historyRepo.findByArtistId(artistId).size();
+    }
+
+    @Override
+    public List<TopSongsDTO> getTopSongsForArtist(Long artistId) {
+        // Provide Pageable to limit results to top 5
+        return historyRepo.findTopSongsForArtist(artistId, PageRequest.of(0, 5));
+    }
+
+    @Override
+    public List<TopListenerDTO> getTopListenersForArtist(Long artistId) {
+        // Provide Pageable to limit results to top 5
+        return historyRepo.findTopListenersForArtist(artistId, PageRequest.of(0, 5));
     }
 }

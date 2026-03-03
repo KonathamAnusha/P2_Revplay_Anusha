@@ -28,10 +28,10 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     List<Playlist> findByUser_UserIdAndPrivacy(Long userId, String privacy);
 
     // Get playlists containing a specific song
-    List<Playlist> findBySongs_SongId(Long songId);
+    List<Playlist> findByPlaylistSongs_Song_SongId(Long songId);
 
     // Get public playlists containing a specific song
-    List<Playlist> findByPrivacyAndSongs_SongId(String privacy, Long songId);
+    List<Playlist> findByPrivacyAndPlaylistSongs_Song_SongId(String privacy, Long songId);
 
     // Get user's playlists sorted by creation date (latest first)
     List<Playlist> findByUser_UserIdOrderByCreatedAtDesc(Long userId);

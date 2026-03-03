@@ -26,6 +26,8 @@ public class AlbumMapper {
                 .description(entity.getDescription())
                 .coverArt(entity.getCoverArt())
                 .releaseDate(entity.getReleaseDate()) // official date
+                .songIds(entity.getSongs() != null ? entity.getSongs().stream().map(com.rev.entity.Songs::getSongId)
+                        .collect(java.util.stream.Collectors.toList()) : new java.util.ArrayList<>())
                 .build();
     }
 }

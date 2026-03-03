@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'RevPlay - ' + ${album.name}">Album - RevPlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/player.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+        <div class="flex-grow-1 p-4 content-area-margin">
+
+            <a href="/dashboard/browse" class="text-info text-decoration-none mb-3 d-inline-block">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Browse
+            </a>
+
+            <!-- Album Header -->
+            <div class="card p-4 mt-2 mb-4">
+                <div class="d-flex align-items-start gap-4">
+                    <img th:src="${album.coverArt != null ? album.coverArt : '/images/image1.png'}" class="rounded"
+                        style="width:200px;height:200px;object-fit:cover" onerror="this.src='/images/image1.png'"
+                        alt="Album Cover">
+                    <div>
+                        <h3 class="fw-bold text-white mb-1" th:text="${album.name}">Album Name</h3>
+                        <p class="mb-1">
+                            <i class="fa-solid fa-user me-1 text-muted"></i>
+                            <a th:if="${artistId != null}" th:href="@{/dashboard/artist/{id}(id=${artistId})}"
+                                class="text-info text-decoration-none" th:text="${artistName}">Artist</a>
+                            <span th:if="${artistId == null}" class="text-muted"
+                                th:text="${artistName != null ? artistName : 'Unknown Artist'}">Unknown Artist</span>
+                        </p>
+                        <p class="mb-1 text-muted" th:if="${album.releaseDate != null}">
+                            <i class="fa-solid fa-calendar me-1"></i>
+                            <span th:text="${album.releaseDate}">Release Date</span>
+                        </p>
+                        <p class="mb-0 text-muted" th:if="${album.description != null && !album.description.isBlank()}"
+                            th:text="${album.description}">Description</p>
+                        <span class="badge bg-info mt-2" th:text="${tracks != null ? tracks.size() : 0} + ' tracks'">0
+                            tracks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracklist -->
+            <h5 class="section-title"><i class="fa-solid fa-list-ol me-2 text-info"></i> Tracklist</h5>
+            <table class="table table-dark table-hover" style="border-radius:12px;overflow:hidden">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="song, iter : ${tracks}">
+                        <td th:text="${iter.index + 1}">1</td>
+                        <td>
+                            <a th:href="@{/dashboard/song/{id}(id=${song.songId})}"
+                                class="text-info text-decoration-none" th:text="${song.title}">Song</a>
+                        </td>
+                        <td th:text="${song.genre}">Genre</td>
+                        <td
+                            th:text="${song.duration / 60 + ':' + (song.duration % 60 < 10 ? '0' : '') + song.duration % 60}">
+                            0:00</td>
+                        <td>
+                            <button class="btn btn-sm btn-success rounded-pill js-play-btn"
+                                th:data-songid="${song.songId}" th:data-title="${song.title}"
+                                th:data-artist="${artistName != null ? artistName : 'Unknown'}"
+                                th:data-url="${song.songUrl}"
+                                th:data-cover="${album.coverArt != null ? album.coverArt : '/images/image1.png'}"
+                                title="Play">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill"
+                                th:onclick="'addFavorite(' + ${song.songId} + ')'" title="Favorite">
+                                <i class="fa-solid fa-heart"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${tracks == null || tracks.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted py-3">
+                            <i class="fa-solid fa-compact-disc fa-2x mb-2 d-block"></i>
+                            No tracks in this album yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="~{auth/music-player :: player}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/player.js}"></script>
+    <script th:inline="javascript">
+        const loggedUserId = /*[[${user != null ? user.userId : ''}]]*/ null;
+
+        // Build initial queue on load
+        document.addEventListener('DOMContentLoaded', buildQueueFromPage);
+        function addFavorite(songId) {
+            fetch('/dashboard/favorites/add/' + songId, { method: 'POST' })
+                .then(res => res.text())
+                .then(data => {
+                    if (data === "Success") alert('Added to favorites!');
+                    else alert(data);
+                });
+        }
+    </script>
+</body>
+
+</html>

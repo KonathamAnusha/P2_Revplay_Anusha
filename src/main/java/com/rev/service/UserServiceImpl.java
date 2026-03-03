@@ -1,10 +1,14 @@
 package com.rev.service;
 
 import com.rev.dto.UserDTO;
+import com.rev.entity.ArtistProfile;
 import com.rev.entity.UserAccount;
+import com.rev.mapper.ArtistMapper;
 import com.rev.mapper.UserMapper;
 import com.rev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,14 +25,20 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserServiceInterface {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ArtistMapper artistMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     // ================= REGISTRATION =================
     @Override
     public UserAccount registerUser(UserDTO dto) {
+        log.info("Registering user with email: {}", dto.getEmail());
+
         if (userRepository.existsByEmail(dto.getEmail())) {
+            log.warn("Registration failed - email already in use: {}", dto.getEmail());
             throw new RuntimeException("Email already in use");
         }
 
@@ -40,25 +50,40 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setBio(dto.getBio());
         user.setProfilePicture(dto.getProfilePicture());
 
-
-
         if (dto.getRole() != null) {
-            user.setRole(dto.getRole()); // no toUpperCase() needed
+            user.setRole(dto.getRole());
         }
         user.setStatus("ACTIVE");
 
-        return userRepository.save(user);
+        // Create ArtistProfile if registering as ARTIST
+        if (user.getRole() == UserAccount.Role.ARTIST && dto.getArtistProfile() != null) {
+            ArtistProfile artistProfile = artistMapper.toEntity(dto.getArtistProfile(), user);
+            user.setArtistProfile(artistProfile);
+            log.info("Creating artist profile for user: {}, stageName: {}",
+                    dto.getEmail(), dto.getArtistProfile().getStageName());
+        }
+
+        UserAccount saved = userRepository.save(user);
+        log.info("User registered successfully with id: {}, role: {}", saved.getUserId(), saved.getRole());
+        return saved;
     }
 
     @Override
     public UserAccount login(String email, String password) {
+        log.info("Login attempt for email: {}", email);
+
         UserAccount user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> {
+                    log.warn("Login failed - user not found: {}", email);
+                    return new RuntimeException("Invalid email or password");
+                });
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            log.warn("Login failed - invalid password for: {}", email);
             throw new RuntimeException("Invalid email or password");
         }
 
+        log.info("User logged in successfully: {}, role: {}", email, user.getRole());
         return user;
     }
 
@@ -91,12 +116,18 @@ public class UserServiceImpl implements UserServiceInterface {
     public UserAccount updateUser(Long id, UserDTO dto) {
         UserAccount user = getUserById(id);
 
-        if (dto.getFullName() != null) user.setFullName(dto.getFullName());
-        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
-        if (dto.getPassword() != null) user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-        if (dto.getDisplayName() != null) user.setDisplayName(dto.getDisplayName());
-        if (dto.getBio() != null) user.setBio(dto.getBio());
-        if (dto.getProfilePicture() != null) user.setProfilePicture(dto.getProfilePicture());
+        if (dto.getFullName() != null)
+            user.setFullName(dto.getFullName());
+        if (dto.getEmail() != null)
+            user.setEmail(dto.getEmail());
+        if (dto.getPassword() != null)
+            user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getDisplayName() != null)
+            user.setDisplayName(dto.getDisplayName());
+        if (dto.getBio() != null)
+            user.setBio(dto.getBio());
+        if (dto.getProfilePicture() != null)
+            user.setProfilePicture(dto.getProfilePicture());
 
         return userRepository.save(user);
     }
@@ -139,7 +170,6 @@ public class UserServiceImpl implements UserServiceInterface {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
     }
 }

@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 public class ListeningHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "history_seq", sequenceName = "HISTORY_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "history_seq")
     private Long historyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,6 +25,9 @@ public class ListeningHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id", nullable = false)
     private Songs song;
+
+    @Column
+    private Long playCount;
 
     @Column(nullable = false)
     private LocalDateTime playedAt;

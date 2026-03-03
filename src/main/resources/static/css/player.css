@@ -1,0 +1,47 @@
+/* ====================== MUSIC PLAYER ====================== */
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    border-top: 1px solid #333;
+}
+
+.music-player .form-range {
+    height: 5px;
+}
+
+.music-player .form-range::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+}
+
+#seek-bar::-webkit-slider-runnable-track {
+    background: #555;
+    border-radius: 3px;
+}
+
+#volume-bar::-webkit-slider-runnable-track {
+    background: #555;
+    border-radius: 3px;
+}
+
+/* Utility classes to replace inline styles */
+.player-cover-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.player-time-badge {
+    min-width: 35px;
+}
+
+.player-volume-control {
+    width: 80px;
+}
+
+.search-bar-dashboard {
+    width: 250px;
+}

@@ -19,6 +19,9 @@ public interface PlaylistSongRepository extends JpaRepository<PlaylistSong, Long
     // Delete a specific song from a playlist
     void deleteByPlaylist_PlaylistIdAndSong_SongId(Long playlistId, Long songId);
 
+    // Delete all records of a specific song from all playlists
+    void deleteBySong_SongId(Long songId);
+
     // Count songs in a playlist
     int countByPlaylist_PlaylistId(Long playlistId);
 

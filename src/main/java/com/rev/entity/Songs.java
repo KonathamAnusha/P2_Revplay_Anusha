@@ -14,14 +14,19 @@ import java.time.LocalDateTime;
 public class Songs {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "songs_seq", sequenceName = "SONGS_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "songs_seq")
     private Long songId;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String genre;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
+    @Column(name = "genre", nullable = false)
+    private String genreName;
 
     @Column(nullable = false)
     private int duration; // duration in seconds
@@ -40,10 +45,15 @@ public class Songs {
     @JoinColumn(name = "album_id")
     private Album album;
 
+    @Column(name = "cover_image")
+    private String coverImage;
+
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isPublic = true;
 
     @Column(nullable = false)
+    @Builder.Default
     private Long playCount = 0L;
 
     @Column(nullable = false, updatable = false)

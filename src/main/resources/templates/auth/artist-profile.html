@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Artist - RevPlay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/Dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/player.css}">
+</head>
+
+<body>
+    <div class="d-flex">
+        <div th:replace="~{auth/nav-sidebar :: sidebar}"></div>
+        <div class="flex-grow-1 p-4" style="margin-bottom:80px;">
+            <a href="javascript:history.back()" class="btn btn-outline-light mb-3">⬅ Back</a>
+
+            <!-- Artist Header -->
+            <div class="d-flex align-items-center mb-4">
+                <img th:src="${artist.bannerImage}" alt="Artist"
+                    style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-right:20px;"
+                    onerror="this.src='/images/image2.png'">
+                <div>
+                    <h3 th:text="${artist.stageName}">Artist Name</h3>
+                    <p class="text-muted" th:text="${artist.genre}">Genre</p>
+                    <p th:text="${artist.bio}">Bio</p>
+                    <div class="d-flex gap-2">
+                        <a th:if="${artist.instagram != null}" th:href="'https://instagram.com/' + ${artist.instagram}"
+                            target="_blank" class="btn btn-sm btn-outline-light">Instagram</a>
+                        <a th:if="${artist.twitter != null}" th:href="'https://twitter.com/' + ${artist.twitter}"
+                            target="_blank" class="btn btn-sm btn-outline-light">Twitter</a>
+                        <a th:if="${artist.youtube != null}" th:href="${artist.youtube}" target="_blank"
+                            class="btn btn-sm btn-outline-light">YouTube</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Songs -->
+            <h5>🎵 Songs</h5>
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Play</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="song, iter : ${artistSongs}">
+                        <td th:text="${iter.index + 1}">1</td>
+                        <td th:text="${song.title}">Song</td>
+                        <td th:text="${song.genre}">Genre</td>
+                        <td><button class="btn btn-sm btn-success"
+                                th:onclick="'playSongById(' + ${song.songId} + ')'">▶</button></td>
+                    </tr>
+                    <tr th:if="${artistSongs.isEmpty()}">
+                        <td colspan="4" class="text-muted">No songs yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Artist Albums -->
+            <h5 class="mt-4">💿 Albums</h5>
+            <div class="row g-3">
+                <div th:if="${artistAlbums.isEmpty()}">
+                    <p class="text-muted">No albums yet.</p>
+                </div>
+                <div class="col-md-3" th:each="album : ${artistAlbums}">
+                    <div class="card bg-secondary text-white">
+                        <img th:src="${album.coverArt}" class="card-img-top" alt="cover"
+                            style="height:150px;object-fit:cover;" onerror="this.src='/images/image1.png'">
+                        <div class="card-body p-2">
+                            <h6 th:text="${album.name}">Album</h6>
+                            <a th:href="@{/dashboard/album/{id}(id=${album.albumId})}"
+                                class="btn btn-sm btn-outline-light">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{auth/music-player :: player}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/player.js}"></script>
+    <script th:src="@{/js/browse.js}"></script>
+</body>
+
+</html>

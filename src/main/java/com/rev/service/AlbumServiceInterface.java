@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AlbumServiceInterface {
 
-    AlbumDTO createAlbum(Long artistId,AlbumDTO albumDTO);
+    AlbumDTO createAlbum(Long artistId, AlbumDTO albumDTO);
 
     AlbumDTO updateAlbum(Long id, AlbumDTO albumDTO);
 
@@ -20,6 +20,11 @@ public interface AlbumServiceInterface {
     List<AlbumDTO> getAlbumsByArtist(Long artistId);
 
     List<AlbumDTO> searchAlbumsByName(String name);
+
+    org.springframework.data.domain.Page<AlbumDTO> getAlbumsByArtistPaginated(Long artistId,
+            org.springframework.data.domain.Pageable pageable);
+
+    List<SongsDTO> getSongsByAlbum(Long albumId);
 
     void addSongToAlbum(Long albumId, Long songId);
 

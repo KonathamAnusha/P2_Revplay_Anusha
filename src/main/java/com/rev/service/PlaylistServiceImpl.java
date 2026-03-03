@@ -2,6 +2,7 @@ package com.rev.service;
 
 import com.rev.dto.PlaylistDTO;
 import com.rev.entity.Playlist;
+import com.rev.entity.PlaylistSong;
 import com.rev.entity.Songs;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.PlaylistMapper;
@@ -34,17 +35,30 @@ public class PlaylistServiceImpl implements PlaylistServiceInterface {
         Playlist saved = playlistRepository.save(playlist);
         return playlistMapper.toDTO(saved);
     }
+
     @Override
     public PlaylistDTO updatePlaylist(Long id, PlaylistDTO dto) {
         Playlist existing = playlistRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Playlist not found with id: " + id));
 
-        if (dto.getName() != null) existing.setName(dto.getName());
-        if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
-        if (dto.getPrivacy() != null) existing.setPrivacy(dto.getPrivacy());
+        if (dto.getName() != null)
+            existing.setName(dto.getName());
+        if (dto.getDescription() != null)
+            existing.setDescription(dto.getDescription());
+        if (dto.getPrivacy() != null)
+            existing.setPrivacy(dto.getPrivacy());
+
         if (dto.getSongIds() != null) {
             List<Songs> songs = songsRepository.findAllById(dto.getSongIds());
-            existing.setSongs(songs);
+            // Clear and rebuild playlistSongs
+            existing.getPlaylistSongs().clear();
+            for (int i = 0; i < songs.size(); i++) {
+                PlaylistSong ps = new PlaylistSong();
+                ps.setPlaylist(existing);
+                ps.setSong(songs.get(i));
+                ps.setOrderIndex(i + 1);
+                existing.getPlaylistSongs().add(ps);
+            }
         }
 
         Playlist updated = playlistRepository.save(existing);
@@ -107,7 +121,7 @@ public class PlaylistServiceImpl implements PlaylistServiceInterface {
 
     @Override
     public List<PlaylistDTO> getPlaylistsBySongId(Long songId) {
-        return playlistRepository.findBySongs_SongId(songId)
+        return playlistRepository.findByPlaylistSongs_Song_SongId(songId)
                 .stream()
                 .map(playlistMapper::toDTO)
                 .collect(Collectors.toList());
