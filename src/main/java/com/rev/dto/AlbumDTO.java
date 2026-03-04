@@ -17,6 +17,7 @@ public class AlbumDTO {
     private String description;
     private String coverArt;
     private Long artistId;
+    private String artistName;
     private LocalDate releaseDate; // official release date
     private java.util.List<Long> songIds;
 }
