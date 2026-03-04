@@ -21,7 +21,8 @@ public class AlbumMapper {
     public AlbumDTO toDTO(Album entity) {
         return AlbumDTO.builder()
                 .albumId(entity.getAlbumId())
-                .artistId(entity.getArtist().getArtistId())
+                .artistId(entity.getArtist() != null ? entity.getArtist().getArtistId() : null)
+                .artistName(entity.getArtist() != null ? entity.getArtist().getStageName() : null)
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .coverArt(entity.getCoverArt())
