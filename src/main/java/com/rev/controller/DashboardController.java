@@ -102,6 +102,11 @@ public class DashboardController {
             model.addAttribute("favorites", favoriteService.getUserFavorites(user.getUserId()));
             model.addAttribute("playlists", playlistService.getPlaylistsByUserId(user.getUserId()));
 
+            // Added for featured songs and albums on dashboard
+            model.addAttribute("allSongs", songsService.getAllSongs());
+            model.addAttribute("allAlbums", albumService.getAllAlbums());
+            model.addAttribute("allPodcasts", podcastService.getAllPodcasts());
+
             return "auth/UserDashboard";
         }
     }
@@ -393,6 +398,19 @@ public class DashboardController {
             return "redirect:/auth/login";
         }
         model.addAttribute("user", user);
+        model.addAttribute("role", user.getRole());
+
+        // Add Listener stats and history
+        model.addAttribute("userStats", statsService.getUserStats(user.getUserId()));
+        model.addAttribute("recentlyPlayed", historyService.getRecentUserHistory(user.getUserId()));
+        model.addAttribute("favorites", favoriteService.getUserFavorites(user.getUserId()));
+        model.addAttribute("playlists", playlistService.getPlaylistsByUserId(user.getUserId()));
+
+        // Add featured songs, albums, and podcasts
+        model.addAttribute("allSongs", songsService.getAllSongs());
+        model.addAttribute("allAlbums", albumService.getAllAlbums());
+        model.addAttribute("allPodcasts", podcastService.getAllPodcasts());
+
         return "auth/UserDashboard";
     }
 
@@ -406,6 +424,70 @@ public class DashboardController {
         model.addAttribute("role", user.getRole());
         model.addAttribute("myPodcasts", podcastService.getPodcastsByHost(artist.getArtistId()));
         return "auth/manage-podcasts";
+    }
+
+    @PostMapping("/dashboard/podcasts/add")
+    public String addPodcast(@RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String coverImage,
+            @RequestParam(required = false) String genreName,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+        UserAccount user = (UserAccount) session.getAttribute("loggedUser");
+        if (user == null || user.getRole() != Role.ARTIST)
+            return "redirect:/auth/login";
+        try {
+            ArtistProfile artist = artistService.getArtistProfileByUserId(user.getUserId());
+            com.rev.dto.PodcastDTO dto = com.rev.dto.PodcastDTO.builder()
+                    .title(title)
+                    .description(description)
+                    .coverImage(coverImage)
+                    .hostId(artist.getArtistId())
+                    .genreName(genreName != null && !genreName.isBlank() ? genreName : "General")
+                    .build();
+            podcastService.createPodcast(dto);
+            redirectAttributes.addFlashAttribute("successMessage", "Podcast created successfully!");
+        } catch (Exception e) {
+            log.error("Error creating podcast", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/dashboard/podcasts";
+    }
+
+    @PostMapping("/dashboard/podcasts/{podcastId}/episodes/add")
+    public String addEpisode(@PathVariable Long podcastId,
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(value = "audioFile", required = true) org.springframework.web.multipart.MultipartFile audioFile,
+            @RequestParam(defaultValue = "0") int duration,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+        UserAccount user = (UserAccount) session.getAttribute("loggedUser");
+        if (user == null || user.getRole() != Role.ARTIST)
+            return "redirect:/auth/login";
+        try {
+            String fileUrl = "";
+            if (audioFile != null && !audioFile.isEmpty()) {
+                String fileName = System.currentTimeMillis() + "_ep_" + audioFile.getOriginalFilename();
+                java.nio.file.Path path = java.nio.file.Paths.get("C:/revplay/music/" + fileName);
+                java.nio.file.Files.createDirectories(path.getParent());
+                java.nio.file.Files.write(path, audioFile.getBytes());
+                fileUrl = "/music/" + fileName;
+                log.info("Episode file uploaded successfully: {}", fileName);
+            }
+
+            com.rev.dto.PodcastEpisodeDTO dto = com.rev.dto.PodcastEpisodeDTO.builder()
+                    .podcastId(podcastId)
+                    .title(title)
+                    .description(description)
+                    .audioUrl(fileUrl)
+                    .duration(duration)
+                    .build();
+            podcastService.addEpisode(dto);
+            redirectAttributes.addFlashAttribute("successMessage", "Episode added successfully!");
+        } catch (Exception e) {
+            log.error("Error adding episode", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/dashboard/podcasts";
     }
 
     @GetMapping("/dashboard/albums")
