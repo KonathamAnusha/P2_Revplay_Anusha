@@ -2,12 +2,14 @@ package com.rev.controller;
 
 import com.rev.dto.AlbumDTO;
 import com.rev.dto.ArtistDTO;
+import com.rev.dto.PodcastDTO;
 import com.rev.dto.SongsDTO;
 import com.rev.entity.ArtistProfile;
 import com.rev.entity.UserAccount;
 import com.rev.mapper.ArtistMapper;
 import com.rev.service.AlbumServiceInterface;
 import com.rev.service.ArtistServiceInterface;
+import com.rev.service.PodcastService;
 import com.rev.service.SongsServiceInterface;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class ViewController {
     private final AlbumServiceInterface albumService;
     private final ArtistServiceInterface artistService;
     private final ArtistMapper artistMapper;
+    private final PodcastService podcastService;
 
     // ==================== SONG DETAILS ====================
     @GetMapping("/song/{id}")
@@ -92,5 +95,21 @@ public class ViewController {
         model.addAttribute("tracks", tracks);
         model.addAttribute("user", user);
         return "auth/album-view";
+    }
+
+    // ==================== PODCAST VIEW (for listeners) ====================
+    @GetMapping("/podcast/{id}")
+    public String podcastView(@PathVariable Long id,
+            HttpSession session,
+            Model model) {
+        UserAccount user = (UserAccount) session.getAttribute("loggedUser");
+        if (user == null)
+            return "redirect:/auth/login";
+
+        PodcastDTO podcast = podcastService.getPodcastById(id);
+        model.addAttribute("podcast", podcast);
+        model.addAttribute("user", user);
+        model.addAttribute("role", user.getRole());
+        return "auth/podcast-view";
     }
 }
