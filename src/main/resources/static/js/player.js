@@ -112,13 +112,9 @@ function playSong(songId, title, artist, audioUrl, coverImage) {
         alert("This track has no audio file.");
     }
 
-    // 5. Analytics
+    // 5. Analytics - Record listening history and increment play count
     if (typeof loggedUserId !== 'undefined' && loggedUserId) {
-        fetch('/api/history', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: loggedUserId, songId: songId, actionType: 'PLAY', duration: 0 })
-        }).catch(e => { });
+        fetch('/api/playback/start/' + songId, { method: 'POST' }).catch(e => { });
         fetch('/api/songs/' + songId + '/play', { method: 'PUT' }).catch(e => { });
     }
 }
@@ -265,4 +261,22 @@ audio.addEventListener('ended', function () {
 function setQueue(songsArray) {
     playlist = songsArray;
     originalPlaylist = [...songsArray];
+}
+
+// Add a single song to the end of the queue dynamically
+function addToQueue(songId, title, artist, audioUrl, coverImage) {
+    let exists = playlist.find(s => s.songId == songId);
+    if (!exists) {
+        let newSong = { songId, title, artist, audioUrl, coverImage };
+        playlist.push(newSong);
+        originalPlaylist.push(newSong);
+        alert(`${title} added to queue!`);
+
+        // If queue was empty and nothing is playing, play it immediately
+        if (!isPlaying && playlist.length === 1) {
+            playSong(songId, title, artist, audioUrl, coverImage);
+        }
+    } else {
+        alert(`${title} is already in the queue.`);
+    }
 }
